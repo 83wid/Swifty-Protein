@@ -10,14 +10,17 @@
     "eject": "expo eject"
   },
   "dependencies": {
+    "axios": "^0.26.1",
     "expo": "~44.0.0",
     "expo-gl": "^11.1.2",
     "expo-status-bar": "~1.2.0",
     "expo-three": "^6.1.0",
+    "parse-pdb": "^1.0.0",
     "react": "17.0.1",
     "react-dom": "17.0.1",
     "react-native": "0.64.3",
     "react-native-web": "0.17.1",
+    "string.prototype.matchall": "^4.0.7",
     "three": "^0.138.3"
   },
   "devDependencies": {
