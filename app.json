@@ -8,9 +8,8 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "splash": {},
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true
     },

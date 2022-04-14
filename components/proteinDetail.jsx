@@ -1,83 +1,128 @@
-import React from 'react';
-import { View, Pressable, Dimensions, StyleSheet, Text } from 'react-native'
+import { View, StyleSheet, Text } from 'react-native';
+import { useState, useEffect } from 'react'
+import axios from 'axios';
 
-const { width } = Dimensions.get('window')
-
-const ProteinDetail = () => {
+const Coordinate = ({ coordLabel, coord }) => {
   return (
-    <View style={styles.mainContainer}>
+    <View style={styles.coordinateContainer}>
+      <Text style={styles.coordinateLabel}>{coordLabel} :</Text>
+      <Text style={styles.coordinate}>{coord}</Text>
+    </View>
+  )
+}
+
+const AtomDetail = ({ DataType, DataValue, AddedStyle }) => {
+  return (
+    <View>
+      <Text style={{ fontSize: 7, color: "#7F7F7F" }}>{DataType}</Text>
+      <Text style={{ marginLeft: 4, }}>{DataValue}</Text>
+    </View>
+  )
+}
+
+const ProteinDetail = ({ atom }) => {
+  const [atomDetail, setAtomDetail] = useState([])
+
+  useEffect(() => {
+    axios.get(`https://neelpatel05.pythonanywhere.com/element/symbol?symbol=${atom.toUpperCase()}`)
+      .then(res => {
+        setAtomDetail(res.data)
+      })
+  }, [atom])
+
+  return (
+    <View style={styles.DetailContainer}>
       <View style={styles.atomContainer}>
-        <Text style={styles.atomLabel}>C</Text>
+        <Text style={styles.atomLabel}>{atomDetail.symbol}</Text>
+        <Text style={{ fontSize: 10, }}>{atomDetail.name}</Text>
+        <Text style={{ fontSize: 10, }}>{atomDetail.standardState}</Text>
       </View>
       <View style={styles.atomDetailContainer}>
-        <Text style={styles.atomDetailLabel}>lol</Text>
+        <Text style={{ fontSize: 13 }}>Coordinates :</Text>
+        <View style={styles.coordinatesContainer}>
+          <Coordinate coordLabel="X" coord={100} />
+          <Coordinate coordLabel="Y" coord={20} />
+          <Coordinate coordLabel="Z" coord={8} />
+        </View>
       </View>
       <View style={styles.proteinContainer}>
-        <Text style={styles.proteinDetail}>lol</Text>
+        <AtomDetail DataType="Density :" DataValue={Number.parseFloat(atomDetail.density).toExponential()} />
+        <AtomDetail DataType="Atomic Number :" DataValue={atomDetail.atomicNumber} />
       </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  mainContainer: {
-    flexDirection: 'row',
-    position: 'absolute',
+  DetailContainer: {
+    position: "absolute",
+    width: "90%",
+    height: 90,
+    backgroundColor: "#fff",
     bottom: 30,
-    backgroundColor: "#333B42",
-    borderRadius: 28,
-    marginHorizontal: width * 0.1,
-    minWidth: width * 0.89,
-    maxWidth: width * 0.89,
-    minHeight: 90,
-    borderWidth: 3,
-    borderColor: "red",
-    // padding: 15,
-    paddingHorizontal: 20,
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  mainItemContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginVertical: 10,
-    borderRadius: 1,
-    borderColor: "#333B42"
+    borderRadius: 18,
+    overflow: "hidden",
+    flexDirection: 'row',
   },
   atomContainer: {
-    width: 35,
-    height: 55,
-    backgroundColor: "red",
+    width: "20%",
+    height: "100%",
     justifyContent: "center",
     alignItems: "center",
-    marginRight: 10,
   },
   atomLabel: {
     fontSize: 30,
-    color: "#fff",
+    color: "#000",
     fontWeight: "bold",
   },
   atomDetailContainer: {
     flex: 1,
-    backgroundColor: "white",
-    height: 55,
-    justifyContent: "center",
-    // alignItems: "center",
+    height: "100%",
     paddingHorizontal: 10,
+    justifyContent: "space-between",
+    flexDirection: 'column',
+    paddingVertical: 15,
   },
   proteinContainer: {
-    backgroundColor: "green",
-    width: width * 0.15,
-    height: 55,
-    justifyContent: "center",
-    alignItems: "center",
+    width: "20%",
+    height: "100%",
+    justifyContent: "space-around",
     fontWeight: "bold",
-    marginLeft: 10,
+    paddingVertical: 10,
   },
   proteinDetail: {
     fontSize: 25,
-  }
+  },
+  atomNameLabel: {
+    fontSize: 10,
+    color: "#000",
+    fontWeight: "bold",
+  },
+  coordinatesContainer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+  },
+  coordinateContainer: {
+    backgroundColor: "#D8D8D8",
+    borderRadius: 50,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    marginHorizontal: 5,
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  coordinateLabel: {
+    fontSize: 10,
+    color: "#fff",
+    fontWeight: "bold",
+  },
+  coordinate: {
+    fontSize: 14,
+    color: "#000",
+    fontWeight: "bold",
+    paddingLeft: 3,
+  },
 })
 
 

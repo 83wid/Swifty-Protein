@@ -13,24 +13,20 @@ export default function ViewsContainer({ navigation, children, styles }) {
     };
   }, []);
 
-  useEffect(() => {
-    (async () => {
-      const networkStatus = await Network.getNetworkStateAsync();
+  // useEffect(() => {
+  //   (async () => {
+  //     const networkStatus = await Network.getNetworkStateAsync();
 
-      console.log(networkStatus);
-    })();
-  }, []);
+  //     console.log(networkStatus);
+  //   })();
+  // }, []);
 
   const handleAppStateChange = nextAppState => {
-    // if the app state is active
-    if (appState.current.match(/inactive|background/) && nextAppState === 'active') {
-      console.log('App has come to the foreground!');
-    }
-    if (appState.current === 'active' && nextAppState === 'inactive')
+    if ((appState.current === 'active' || appState.current === 'inactive') && nextAppState === 'background')
       navigation.navigate('Login');
 
+    console.log('AppState', appState.current, nextAppState);
     appState.current = nextAppState;
-    console.log('AppState', appState.current);
   };
 
   return (

@@ -1,6 +1,7 @@
-import { View, FlatList, StyleSheet, Text, TextInput, SafeAreaView, StatusBar, Image, Pressable } from 'react-native';
-import Material from "react-native-vector-icons/MaterialIcons"
-import { useEffect, useState } from 'react';
+import { View, FlatList, StyleSheet, Text, Image, Pressable, Alert } from 'react-native';
+import { useEffect, useState, useRef } from 'react';
+import Feather from "react-native-vector-icons/Feather";
+import * as Network from 'expo-network';
 
 export default function FlatListComponent({ navigation, DATA }) {
   const [scrollEnabled, setScrollEnabled] = useState(true);
@@ -9,19 +10,53 @@ export default function FlatListComponent({ navigation, DATA }) {
     flatList: 0,
   })
 
-  const Item = ({ title }) => (
-    <Pressable style={styles.ligand} onPress={() => navigation.navigate('Ligand', {
-      name: title
-    })}
-    >
-      <Text style={styles.title}>{title}</Text>
-      <Material style={styles.icon} name="arrow-right" size={25} color="white" />
-    </Pressable>
-  );
+  const checkNetwork = async (title) => {
+    await Network.getNetworkStateAsync().then(res => {
+      if (res.isConnected) {
+        navigation.navigate('Ligand', { name: title });
+      } else {
+        Alert.alert(
+          'No Internet Connection',
+          'Please check your internet connection',
+          [{ text: 'OK' }],
+        );
+      }
+    });
+  }
 
-  const renderItem = ({ item }) => <Item title={item} />;
+  useEffect(() => {
+    (async () => {
+      await Network.getNetworkStateAsync().then(res => {
+        if (res.isConnected === false) {
+          Alert.alert(
+            'No Internet Connection',
+            'Please check your internet connection',
+            [{ text: 'OK' }],
+          );
+        }
+      });
+    })();
+  }, []);
 
-  const onLayout = (event) => {
+  const renderItem = ({ item }) => {
+    return (
+      <Pressable style={styles.ligand} onPress={() => checkNetwork(item)}>
+        <Text style={styles.title}>{item}</Text>
+        <Feather style={styles.icon} name="chevron-right" size={30} color="black" />
+      </Pressable>
+    )
+  }
+
+  const ListEmptyComponent = () => {
+    return (
+      <View style={styles.emptyContainer}>
+        <Image source={require('../assets/nodata.gif')} resizeMode='contain' style={styles.gif} />
+        <Text style={styles.emptyText}>No Ligands Found</Text>
+      </View>
+    )
+  }
+
+  const onLayoutFlatList = (event) => {
     const height = event.nativeEvent.layout.height;
     setFlatHeight({
       ...flatHeight,
@@ -29,7 +64,7 @@ export default function FlatListComponent({ navigation, DATA }) {
     })
   }
 
-  const onLayout1 = (event) => {
+  const onLayoutContainer = (event) => {
     const height = event.nativeEvent.layout.height;
     setFlatHeight({
       ...flatHeight,
@@ -38,31 +73,32 @@ export default function FlatListComponent({ navigation, DATA }) {
   }
 
   useEffect(() => {
-    if (flatHeight.flatContainer > 75 * DATA.length || DATA.length <= 0) {
+    if (flatHeight.flatContainer > 61 * DATA.length || DATA.length <= 0)
       setScrollEnabled(false);
-      // console.log("scroll disabled", flatHeight.flatContainer, 75 * DATA.length, flatHeight.flatContainer > 75 * DATA.length);
-    }
     else
       setScrollEnabled(true);;
   }, [flatHeight, DATA.length])
+
   return (
-    <View style={styles.ligandsContainer} onLayout={onLayout1}>
+    <View style={styles.ligandsContainer} onLayout={onLayoutContainer} >
+      {/* {connected === true ? */}
       <FlatList
-        onLayout={onLayout}
+        onLayout={onLayoutFlatList}
         data={DATA}
         renderItem={renderItem}
         keyExtractor={(item) => DATA.indexOf(item)}
         initialNumToRender={10}
         showsVerticalScrollIndicator={false}
         scrollEnabled={scrollEnabled}
-        ListEmptyComponent={() => (
-          <View style={styles.emptyContainer}>
-            <Image source={require('../assets/nodata.gif')} resizeMode='contain' style={styles.gif} />
-            <Text style={styles.emptyText}>No Ligands Found</Text>
-          </View>
-        )}
-        contentContainerStyle={{ flexGrow: 1, }}
+        ListEmptyComponent={ListEmptyComponent}
+        contentContainerStyle={{ flexGrow: 1 }}
       />
+      {/* //   :
+      //   <View style={styles.emptyContainer}>
+      //     <Image source={require('../assets/nodata.gif')} resizeMode='contain' style={styles.gif} />
+      //     <Text style={styles.emptyText}>No Internet Connection</Text>
+      //   </View>
+      // } */}
     </View>
   )
 }
@@ -79,19 +115,12 @@ const styles = StyleSheet.create({
   },
   ligand: {
     backgroundColor: "#e7eefc",
-    padding: 20,
+    padding: 15,
     borderRadius: 18,
     marginBottom: 10,
     flexDirection: 'row',
     justifyContent: 'space-between',
-  },
-  iconContainer: {
-    width: '100%',
     alignItems: 'center',
-    marginTop: 10,
-  },
-  downIcon: {
-    paddingBottom: 10,
   },
   emptyContainer: {
     flex: 1,
@@ -110,4 +139,12 @@ const styles = StyleSheet.create({
     textAlign: "center",
     lineHeight: 35,
   },
+  title: {
+    fontSize: 15,
+    fontWeight: "bold",
+    textAlign: "left",
+  },
+  icon: {
+    marginRight: 10,
+  }
 })
