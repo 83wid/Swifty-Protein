@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Button, StyleSheet, TextInput, View } from "react-native";
 import axios from "axios";
+import { atomsParse } from "./Helpers/atomsParse";
+import { connectParse } from "./Helpers/connectParse";
 
 
 
@@ -23,7 +25,8 @@ export default function SearchBar({ navigation }) {
                     axios(url1)
                         .then((res) => {
                             if (res.data) {
-                                navigation.navigate('Protein', res.data);
+                                const data = {atoms: atomsParse(res.data), connects: connectParse(res.data)};
+                                navigation.navigate('Protein', data);
                             }
                         })
                         .catch((er) => alert(er));
