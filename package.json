@@ -19,20 +19,17 @@
     "expo-status-bar": "~1.2.0",
     "expo-three": "^6.1.0",
     "expo-three-orbit-controls": "^2.0.0",
-    "parse-pdb": "^1.0.0",
     "react": "17.0.1",
     "react-dom": "17.0.1",
     "react-native": "0.64.3",
     "react-native-safe-area-context": "3.3.2",
     "react-native-screens": "~3.10.1",
     "react-native-web": "0.17.1",
-    "string.prototype.matchall": "^4.0.7",
     "three": "^0.138.3"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
-    "@types/react": "^17.0.44",
-    "typescript": "~4.3.5"
+    "@types/react": "^17.0.44"
   },
   "private": true
 }
