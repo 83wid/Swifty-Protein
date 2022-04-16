@@ -2,6 +2,7 @@ import { View, FlatList, StyleSheet, Text, Image, Pressable, Alert } from 'react
 import { useEffect, useState, useRef } from 'react';
 import Feather from "react-native-vector-icons/Feather";
 import * as Network from 'expo-network';
+import axios from 'axios';
 
 export default function FlatListComponent({ navigation, DATA }) {
   const [scrollEnabled, setScrollEnabled] = useState(true);
@@ -10,10 +11,18 @@ export default function FlatListComponent({ navigation, DATA }) {
     flatList: 0,
   })
 
-  const checkNetwork = async (title) => {
+  const checkNetwork = async (ligand) => {
     await Network.getNetworkStateAsync().then(res => {
       if (res.isConnected) {
-        navigation.navigate('Ligand', { name: title });
+        const url1 = `https://files.rcsb.org/ligands/view/${ligand}_model.pdb`;
+        axios(url1)
+          .then((res) => {
+            if (res.data) {
+              navigation.navigate('Ligand', { name: ligand, data: res.data });
+              // navigation.navigate('Protein', res.data);
+            }
+          })
+          .catch((er) => alert(er));
       } else {
         Alert.alert(
           'No Internet Connection',
@@ -81,7 +90,6 @@ export default function FlatListComponent({ navigation, DATA }) {
 
   return (
     <View style={styles.ligandsContainer} onLayout={onLayoutContainer} >
-      {/* {connected === true ? */}
       <FlatList
         onLayout={onLayoutFlatList}
         data={DATA}
@@ -93,12 +101,6 @@ export default function FlatListComponent({ navigation, DATA }) {
         ListEmptyComponent={ListEmptyComponent}
         contentContainerStyle={{ flexGrow: 1 }}
       />
-      {/* //   :
-      //   <View style={styles.emptyContainer}>
-      //     <Image source={require('../assets/nodata.gif')} resizeMode='contain' style={styles.gif} />
-      //     <Text style={styles.emptyText}>No Internet Connection</Text>
-      //   </View>
-      // } */}
     </View>
   )
 }

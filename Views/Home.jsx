@@ -1,11 +1,10 @@
-import ViewsContainer from '../components/ViewsContainer';
 import FlatListComponent from '../components/FlatList';
 import { View, StyleSheet, Text, TextInput, SafeAreaView, StatusBar, Keyboard } from 'react-native';
 import { useEffect, useState } from 'react';
-import axios from 'axios';
+
+const data = require('../assets/ligands.json');
 
 export default function Home({ navigation }) {
-  const [data, setData] = useState([]);
   const [sortData, setSortData] = useState([]);
   const [search, setSearch] = useState('');
 
@@ -15,16 +14,8 @@ export default function Home({ navigation }) {
   }
 
   useEffect(() => {
-    axios.get('https://projects.intra.42.fr/uploads/document/document/3531/ligands.txt')
-      .then(res => {
-        const data = res.data.split('\n');
-        setData(data);
-        setSortData(data);
-      })
-      .catch(err => {
-        console.log(err);
-      })
-  }, []);
+    setSortData(data);
+  }, [data]);
 
   useEffect(() => {
     if (search.length > 0) {
@@ -40,7 +31,7 @@ export default function Home({ navigation }) {
   }, [search]);
 
   return (
-    <ViewsContainer navigation={navigation} styles={styles.container} >
+    <View navigation={navigation} style={styles.container} >
       <StatusBar barStyle="light-content" />
       <SafeAreaView>
         <View style={styles.searchBarContainer}>
@@ -53,7 +44,7 @@ export default function Home({ navigation }) {
         </View>
       </SafeAreaView>
       <FlatListComponent DATA={sortData} navigation={navigation} />
-    </ViewsContainer >
+    </View >
   )
 }
 

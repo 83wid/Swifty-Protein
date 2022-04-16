@@ -31,25 +31,29 @@ const ProteinDetail = ({ atom }) => {
   }, [atom])
 
   return (
-    <View style={styles.DetailContainer}>
-      <View style={styles.atomContainer}>
-        <Text style={styles.atomLabel}>{atomDetail.symbol}</Text>
-        <Text style={{ fontSize: 10, }}>{atomDetail.name}</Text>
-        <Text style={{ fontSize: 10, }}>{atomDetail.standardState}</Text>
-      </View>
-      <View style={styles.atomDetailContainer}>
-        <Text style={{ fontSize: 13 }}>Coordinates :</Text>
-        <View style={styles.coordinatesContainer}>
-          <Coordinate coordLabel="X" coord={100} />
-          <Coordinate coordLabel="Y" coord={20} />
-          <Coordinate coordLabel="Z" coord={8} />
+    <>
+      {atomDetail.length !== 0 &&
+        <View style={styles.DetailContainer}>
+          <View style={styles.atomContainer}>
+            <Text style={styles.atomLabel}>{atomDetail.symbol}</Text>
+            <Text style={{ fontSize: 10, }}>{atomDetail.name}</Text>
+            <Text style={{ fontSize: 10, }}>{atomDetail.standardState}</Text>
+          </View>
+          <View style={styles.atomDetailContainer}>
+            <Text style={{ fontSize: 13 }}>Coordinates :</Text>
+            <View style={styles.coordinatesContainer}>
+              <Coordinate coordLabel="X" coord={100} />
+              <Coordinate coordLabel="Y" coord={20} />
+              <Coordinate coordLabel="Z" coord={8} />
+            </View>
+          </View>
+          <View style={styles.proteinContainer}>
+            <AtomDetail DataType="Density :" DataValue={Number.parseFloat(atomDetail.density).toExponential()} />
+            <AtomDetail DataType="Atomic Number :" DataValue={atomDetail.atomicNumber} />
+          </View>
         </View>
-      </View>
-      <View style={styles.proteinContainer}>
-        <AtomDetail DataType="Density :" DataValue={Number.parseFloat(atomDetail.density).toExponential()} />
-        <AtomDetail DataType="Atomic Number :" DataValue={atomDetail.atomicNumber} />
-      </View>
-    </View>
+      }
+    </>
   );
 }
 
