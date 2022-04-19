@@ -19,7 +19,6 @@ export default function FlatListComponent({ navigation, DATA }) {
           .then((res) => {
             if (res.data) {
               navigation.navigate('Ligand', { name: ligand, data: res.data });
-              // navigation.navigate('Protein', res.data);
             }
           })
           .catch((er) => alert(er));
@@ -59,7 +58,7 @@ export default function FlatListComponent({ navigation, DATA }) {
   const ListEmptyComponent = () => {
     return (
       <View style={styles.emptyContainer}>
-        <Image source={require('../assets/nodata.gif')} resizeMode='contain' style={styles.gif} />
+        <Image source={require('../../assets/nodata.gif')} resizeMode='contain' style={styles.gif} />
         <Text style={styles.emptyText}>No Ligands Found</Text>
       </View>
     )
@@ -113,7 +112,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 35,
     borderTopRightRadius: 35,
     paddingVertical: 20,
-    paddingHorizontal: 30,
+    paddingHorizontal: 37,
   },
   ligand: {
     backgroundColor: "#e7eefc",
