@@ -26,7 +26,23 @@ import {
   SpotLight,
 } from "three";
 
+import { captureScreen } from "react-native-view-shot";
+
 const raycaster = new THREE.Raycaster();
+
+function saveAsImage(renderer) {
+  captureScreen({
+    format: "jpg",
+    quality: 0.8,
+  }).then(
+    (uri) => saveFile(uri),
+    (error) => console.error("Oops, snapshot failed", error)
+  );
+}
+
+var saveFile = function (uri) {
+  console.log("uri", uri);
+};
 
 export default function Protein({ navigation, route }) {
   const [Atoms, setAtoms] = useState([]);
@@ -249,6 +265,27 @@ export default function Protein({ navigation, route }) {
           >
             -
           </Text>
+        </TouchableOpacity>
+      </View>
+      <View
+        style={{
+          paddingHorizontal: 21,
+          paddingVertical: 21,
+          flexDirection: "row",
+          justifyContent: "space-between",
+          position: "absolute",
+          left: 0,
+          zIndex: 1,
+          backgroundColor: "white",
+          width: "100%",
+        }}
+      >
+        <TouchableOpacity
+          onPress={() => {
+            saveAsImage(renderRef.current);
+          }}
+        >
+          <Text>Take Snapshot</Text>
         </TouchableOpacity>
       </View>
     </View>
