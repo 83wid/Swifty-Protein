@@ -1,14 +1,30 @@
-import { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, StatusBar } from "react-native";
-import ProteinDetail from "./ProteinDetail";
+import { View, StyleSheet, StatusBar } from "react-native";
+import { ProteinDetail } from "./ProteinDetail";
+import SwitchButton from "./HomeScreen/SwitchButton";
 
 export default function Ligand({ navigation, route }) {
   return (
     <View style={styles.ligandPage}>
       <StatusBar backgroundColor="#000" barStyle="dark-content" />
       <View style={styles.content}>
+        <SwitchButton addedStyle={{ left: 20, top: 20, }}
+          items={[
+            {
+              name: "F-P",
+              value: 0,
+            },
+            {
+              name: "P-C",
+              value: 1,
+            },
+            {
+              name: "P-A",
+              value: 2,
+            }
+          ]}
+        />
       </View>
-      {/* <ProteinDetail atom="C" /> */}
+      <ProteinDetail atom="C" />
     </View>
   )
 }
