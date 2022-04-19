@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import {
   StyleSheet,
   Feather,
+  Alert,
   TouchableOpacity,
   View,
   Text,
@@ -25,10 +26,14 @@ import {
   SpotLight,
 } from "three";
 
+const raycaster = new THREE.Raycaster();
+
 export default function Protein({ navigation, route }) {
   const [Atoms, setAtoms] = useState([]);
   const [connect, setConnect] = useState([]);
   const [renderer, setRenderer] = useState([]);
+  const [width, setWidth] = useState([]);
+  const [height, setHeight] = useState([]);
   const renderRef = React.useRef(null);
   const [camera, setCamera] = useState(true);
   const [scene, setScene] = useState(true);
@@ -36,9 +41,9 @@ export default function Protein({ navigation, route }) {
   useEffect(() => {
     setAtoms(data.atoms);
     //Create Camera
+    setWidth(Dimensions.get("screen").width);
+    setHeight(Dimensions.get("screen").height);
     const newCamera = new PerspectiveCamera(75, 0.5, 0.01, 1000);
-    newCamera.position.set(0, 0, -20);
-    newCamera.lookAt(0, 0, 0);
 
     // Create scene
     const newScene = new Scene();
@@ -48,6 +53,41 @@ export default function Protein({ navigation, route }) {
     setConnect(data.connects);
   }, [renderer]);
   const scale = 2;
+
+  const handleStateChange = ({ nativeEvent }) => {
+    let pointer = new THREE.Vector2();
+
+    console.log(nativeEvent);
+    pointer.x = (nativeEvent.locationX / width) * 2 - 1;
+    pointer.y = -(nativeEvent.locationY / height) * 2 + 1;
+    raycaster.setFromCamera(pointer, camera);
+    // calculate objects intersecting the picking ray
+    const intersects = raycaster.intersectObjects(scene.children);
+    if (intersects.length > 0) {
+      let element = intersects[0].object;
+      console.log(element);
+      if (element.info != undefined) {
+        Alert.alert(
+          "Atom Details",
+          `Element : ${element.info["name"]}
+        x : ${element.info["x"]}
+        y : ${element.info["y"]}
+        z : ${element.info["z"]}
+        color : ${element.info["color"]}
+        `,
+          [
+            {
+              text: "Cancel",
+              onPress: () => console.log("Cancel Pressed"),
+              style: "cancel",
+            },
+            { text: "OK", onPress: () => console.log("OK Pressed") },
+          ],
+          { cancelable: false }
+        );
+      }
+    }
+  };
   const Zoom = (value) => {
     if (value) {
       if (camera.fov - 5 > 10) camera.fov -= 5;
@@ -56,11 +96,16 @@ export default function Protein({ navigation, route }) {
       if (camera.fov + 5 < 120) camera.fov += 5;
     }
     camera.updateProjectionMatrix();
+    setCamera(camera);
     renderRef.current?.render(scene, camera);
   };
   return (
     <View style={{ flex: 1 }}>
-      <OrbitControlsView key={renderer} camera={camera}>
+      <OrbitControlsView
+        key={renderer}
+        camera={camera}
+        onTouchEndCapture={handleStateChange}
+      >
         {connect.length > 0 && Atoms.length > 0 ? (
           <GLView
             key={renderer}
@@ -85,6 +130,9 @@ export default function Protein({ navigation, route }) {
               renderer.setSize(width, height);
               renderRef.current = renderer;
 
+              camera.position.set(0, 0, 20);
+              camera.lookAt(0, 0, 0);
+
               // atoms cordinates
               const start = new THREE.Vector3();
               const end = new THREE.Vector3();
@@ -101,6 +149,7 @@ export default function Protein({ navigation, route }) {
                 pos.z = Atoms[i].z;
                 pos.multiplyScalar(scale);
                 atomMesh.position.copy(pos);
+                atomMesh.info = Atoms[i];
                 atomMesh.material.color.set(Atoms[i].color);
 
                 scene.add(atomMesh);
@@ -124,8 +173,8 @@ export default function Protein({ navigation, route }) {
                     start.multiplyScalar(scale);
                     end.multiplyScalar(scale);
                     const geoBox = new THREE.BoxGeometry(
-                      0.3,
-                      0.3,
+                      0.2,
+                      0.2,
                       start.distanceTo(end)
                     );
                     const cylinder = new THREE.Mesh(
