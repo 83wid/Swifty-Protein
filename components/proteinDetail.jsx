@@ -20,10 +20,14 @@ const AtomDetail = ({ DataType, DataValue, AddedStyle }) => {
   )
 }
 
-const ProteinDetail = ({ atom }) => {
+export const ProteinDetail = ({ atom }) => {
   const [atomDetail, setAtomDetail] = useState([])
 
   useEffect(() => {
+    if (atom === "") {
+      setAtomDetail([])
+      return;
+    }
     axios.get(`https://neelpatel05.pythonanywhere.com/element/symbol?symbol=${atom.toUpperCase()}`)
       .then(res => {
         setAtomDetail(res.data)
@@ -108,7 +112,7 @@ const styles = StyleSheet.create({
   },
   coordinateContainer: {
     backgroundColor: "#D8D8D8",
-    borderRadius: 50,
+    borderRadius: 10,
     paddingVertical: 5,
     paddingHorizontal: 10,
     marginHorizontal: 5,
