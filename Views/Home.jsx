@@ -1,12 +1,14 @@
-import FlatListComponent from '../components/FlatList';
-import { View, StyleSheet, Text, TextInput, SafeAreaView, StatusBar, Keyboard } from 'react-native';
-import { useEffect, useState } from 'react';
+import FlatListComponent from '../components/HomeScreen/FlatList';
+import { View, StyleSheet, Text, TextInput, SafeAreaView, StatusBar, Keyboard, Dimensions } from 'react-native';
+import { useEffect, useState, useRef } from 'react';
+import useOrientation from '../Hooks/useOrientation';
 
 const data = require('../assets/ligands.json');
 
 export default function Home({ navigation }) {
   const [sortData, setSortData] = useState([]);
   const [search, setSearch] = useState('');
+  const orientation = useOrientation();
 
   const handleOutsideClick = (e) => {
     Keyboard.dismiss();
@@ -31,7 +33,11 @@ export default function Home({ navigation }) {
   }, [search]);
 
   return (
-    <View navigation={navigation} style={styles.container} >
+    <View navigation={navigation} style={{
+      ...styles.container,
+      paddingVertical: orientation === "portrait" ? 0 : 20,
+    }}
+    >
       <StatusBar barStyle="light-content" />
       <SafeAreaView>
         <View style={styles.searchBarContainer}>
@@ -54,7 +60,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#000',
   },
   searchBarContainer: {
-    // backgroundColor: '#111',
     justifyContent: 'space-evenly',
     height: 120,
     width: '100%',

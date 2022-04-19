@@ -1,13 +1,11 @@
-import React, { useRef, useState, useEffect } from 'react';
-import { Pressable, AppState, Alert, Button, StyleSheet, Text, View, Image, Dimensions } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { Pressable, Alert, StyleSheet, Text, View, Image, Dimensions } from 'react-native';
 import * as LocalAuthentication from 'expo-local-authentication';
-
-const { width } = Dimensions.get('window')
-const { height } = Dimensions.get('window')
+import useOrientation from '../Hooks/useOrientation';
 
 export default function Login({ navigation }) {
   const [compatible, setCompatible] = useState(false);
-  const [success, setSuccess] = useState(false);
+  const orientation = useOrientation();
 
   useEffect(() => {
     (async () => {
@@ -31,28 +29,41 @@ export default function Login({ navigation }) {
           fallbackText: 'Fallback',
         });
         if (result.success) {
-          setSuccess(true);
           navigation.navigate('Home');
         }
-        else
-          setSuccess(false);
       }
       else {
-        setSuccess(true);
         navigation.navigate('Home');
       }
     } catch (error) {
       Alert.alert('An error as occured', error?.message);
-      setSuccess(false);
     }
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.gifContainer}>
+    <View style={{
+      ...styles.container,
+      flexDirection: orientation === 'portrait' ? 'column' : 'row',
+      width: orientation === 'portrait' ? Dimensions.get('window').width : Dimensions.get('window').width,
+      height: orientation === 'portrait' ? Dimensions.get('window').height : Dimensions.get('window').height,
+    }}>
+      <View style={{
+        width: orientation === 'portrait' ? Dimensions.get('screen').width * 0.9 : Dimensions.get('screen').width * 0.5,
+        height: orientation === 'portrait' ? Dimensions.get('screen').height * 0.55 : "100%",
+        minWidth: orientation === 'portrait' ? Dimensions.get('screen').width * 0.9 : Dimensions.get('screen').width * 0.5,
+      }}>
         <Image source={require('../assets/Globe.gif')} resizeMode='contain' style={styles.gif} />
       </View>
-      <View style={styles.buttomContainer}>
+      <View style={{
+        ...styles.buttomContainer,
+        position: orientation === 'portrait' ? 'absolute' : 'relative',
+        width: orientation === 'portrait' ? Dimensions.get('screen').width : Dimensions.get('screen').width * 0.5,
+        height: orientation === 'portrait' ? Dimensions.get('screen').height * 0.45 : "100%",
+        borderTopRightRadius: orientation === 'portrait' ? 28 : 0,
+        borderTopLeftRadius: 28,
+        borderBottomLeftRadius: orientation === 'portrait' ? 0 : 28,
+        paddingHorizontal: 40,
+      }}>
         <Text style={styles.bigText}>Learn more about Proteins.</Text>
         <Text style={styles.smallText}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis scelerisque tellus est, non consectetur sem sollicitudin eu. Nulla vitae nulla a lorem fringilla convallis. Integer ut metus molestie</Text>
         <View style={styles.LoginContainer}>
@@ -70,14 +81,9 @@ export default function Login({ navigation }) {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     backgroundColor: '#000',
     alignItems: 'center',
     color: '#fff',
-  },
-  gifContainer: {
-    width: '90%',
-    height: '55%',
   },
   gif: {
     flex: 1,
@@ -98,10 +104,7 @@ const styles = StyleSheet.create({
   },
   buttomContainer: {
     flexDirection: 'column',
-    position: 'absolute',
     bottom: 0,
-    minHeight: height * 0.45,
-    width: '100%',
     backgroundColor: '#111111',
     borderTopRightRadius: 28,
     borderTopLeftRadius: 28,

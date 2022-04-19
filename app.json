@@ -3,7 +3,7 @@
     "name": "Swifty-Protein",
     "slug": "Swifty-Protein",
     "version": "1.0.0",
-    "orientation": "portrait",
+    "orientation": "default",
     "icon": "./assets/LogoWhite.png",
     "updates": {
       "fallbackToCacheTimeout": 0
