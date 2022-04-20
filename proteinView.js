@@ -13,67 +13,46 @@ import {
 import { GLView } from "expo-gl";
 import { Renderer } from "expo-three";
 import OrbitControlsView from "./controls/OrbitControlsView";
-import { OrbitControls } from "./controls/OrbitControls";
 
 import {
   AmbientLight,
   PerspectiveCamera,
-  PointLight,
   Scene,
-  Camera,
-  BoxBufferGeometry,
-  MeshBasicMaterial,
   SpotLight,
 } from "three";
 
-import { captureScreen } from "react-native-view-shot";
-
 const raycaster = new THREE.Raycaster();
-
-function saveAsImage(renderer) {
-  captureScreen({
-    format: "jpg",
-    quality: 0.8,
-  }).then(
-    (uri) => saveFile(uri),
-    (error) => console.error("Oops, snapshot failed", error)
-  );
-}
-
-var saveFile = function (uri) {
-  console.log("uri", uri);
-};
 
 export default function Protein({ navigation, route }) {
   const [Atoms, setAtoms] = useState([]);
   const [connect, setConnect] = useState([]);
-  const [renderer, setRenderer] = useState([]);
-  const [width, setWidth] = useState([]);
-  const [height, setHeight] = useState([]);
+  const [width, setWidth] = useState(Dimensions.get("screen").width);
+  const [height, setHeight] = useState(Dimensions.get("screen").height);
   const renderRef = React.useRef(null);
   const [camera, setCamera] = useState(true);
   const [scene, setScene] = useState(true);
   const data = route.params;
   useEffect(() => {
     setAtoms(data.atoms);
+    setConnect(data.connects);
+
     //Create Camera
-    setWidth(Dimensions.get("screen").width);
-    setHeight(Dimensions.get("screen").height);
-    const newCamera = new PerspectiveCamera(75, 0.5, 0.01, 1000);
+    const camera = new PerspectiveCamera(75, width / height, 0.01, 1000);
+    camera.position.set(0, 0, -30);
+    camera.lookAt(0, 0, 0);
+    setCamera(camera);
 
     // Create scene
     const newScene = new Scene();
-
     setScene(newScene);
-    setCamera(newCamera);
-    setConnect(data.connects);
-  }, [renderer]);
+    
+  }, [renderRef]);
+
   const scale = 2;
 
-  const handleStateChange = ({ nativeEvent }) => {
+  // Show Atom info when Tap on Atom
+  const showAtomsInfo = ({ nativeEvent }) => {
     let pointer = new THREE.Vector2();
-
-    console.log(nativeEvent);
     pointer.x = (nativeEvent.locationX / width) * 2 - 1;
     pointer.y = -(nativeEvent.locationY / height) * 2 + 1;
     raycaster.setFromCamera(pointer, camera);
@@ -86,11 +65,11 @@ export default function Protein({ navigation, route }) {
         Alert.alert(
           "Atom Details",
           `Element : ${element.info["name"]}
-        x : ${element.info["x"]}
-        y : ${element.info["y"]}
-        z : ${element.info["z"]}
-        color : ${element.info["color"]}
-        `,
+          x : ${element.info["x"]}
+          y : ${element.info["y"]}
+          z : ${element.info["z"]}
+          color : ${element.info["color"]}
+          `,
           [
             {
               text: "Cancel",
@@ -104,6 +83,8 @@ export default function Protein({ navigation, route }) {
       }
     }
   };
+
+  // Zoom in and out on Touch
   const Zoom = (value) => {
     if (value) {
       if (camera.fov - 5 > 10) camera.fov -= 5;
@@ -115,16 +96,17 @@ export default function Protein({ navigation, route }) {
     setCamera(camera);
     renderRef.current?.render(scene, camera);
   };
+
   return (
     <View style={{ flex: 1 }}>
       <OrbitControlsView
-        key={renderer}
+        key={renderRef.current}
         camera={camera}
-        onTouchEndCapture={handleStateChange}
+        onTouchEndCapture={showAtomsInfo}
       >
         {connect.length > 0 && Atoms.length > 0 ? (
           <GLView
-            key={renderer}
+            key={renderRef.current}
             style={{
               width: Dimensions.get("screen").width,
               height: Dimensions.get("screen").height,
@@ -141,20 +123,20 @@ export default function Protein({ navigation, route }) {
               spotLight.lookAt(scene.position);
               scene.add(spotLight);
 
-              // // Create renderer
+              // Create renderer
               const renderer = new Renderer({ gl });
               renderer.setSize(width, height);
               renderRef.current = renderer;
 
-              camera.position.set(0, 0, 20);
-              camera.lookAt(0, 0, 0);
+              // create Group
+              const group = new THREE.Group();
 
               // atoms cordinates
               const start = new THREE.Vector3();
               const end = new THREE.Vector3();
               const pos = new THREE.Vector3();
 
-              // Add Atoms  instances to our scene
+              // Add Atoms  instances to our Group
               for (let i = 0; i < Atoms.length; i++) {
                 let atomMesh = new THREE.Mesh(
                   new THREE.SphereGeometry(0.4, 32, 16),
@@ -167,11 +149,10 @@ export default function Protein({ navigation, route }) {
                 atomMesh.position.copy(pos);
                 atomMesh.info = Atoms[i];
                 atomMesh.material.color.set(Atoms[i].color);
-
-                scene.add(atomMesh);
+                group.add(atomMesh);
               }
 
-              // Add Connections  instances to our scene
+              // Add Connections  instances to our Group
               for (let i = 0; i < connect.length; i++) {
                 for (let j = 1; j < connect[i].length; j++) {
                   const initCords = Number(connect[i][0]) - 1;
@@ -201,10 +182,17 @@ export default function Protein({ navigation, route }) {
                     mid.lerp(end, 0.5);
                     cylinder.position.copy(mid);
                     cylinder.lookAt(end);
-                    scene.add(cylinder);
+
+                    group.add(cylinder);
                   }
                 }
               }
+
+              // Set Camera to look at the Group center
+              camera.lookAt(computeGroupCenter(group));
+
+              // Add Group to Scene
+              scene.add(group);
 
               // Render function
               const render = () => {
@@ -290,4 +278,15 @@ export default function Protein({ navigation, route }) {
       </View>
     </View>
   );
+}
+
+function computeGroupCenter(group) {
+  var center = new THREE.Vector3();
+  var children = group.children;
+  var count = children.length;
+  for (var i = 0; i < count; i++) {
+    center.add(children[i].position);
+  }
+  center.divideScalar(count);
+  return center;
 }
