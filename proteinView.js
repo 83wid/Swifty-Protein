@@ -48,7 +48,7 @@ export default function Protein({ navigation, route }) {
     
   }, [renderRef]);
 
-  const scale = 2;
+  const scale = width < height ? 1 + width / height  : 1 + height / width;
 
   // Show Atom info when Tap on Atom
   const showAtomsInfo = ({ nativeEvent }) => {
