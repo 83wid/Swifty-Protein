@@ -32,7 +32,8 @@ export default function Protein({ navigation, route }) {
   );
 
   // set Atoms and Connects to a group
-  const group = setGeometries({ atoms, connect, width, height });
+  const model = 1;
+  const group = setGeometries({ atoms, connect, width, height, model});
 
   // Create scene
   const scene = new Scene();
