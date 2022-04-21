@@ -1,0 +1,87 @@
+const setGeometries = ({ atoms, connect, width, height }) => {
+    const scale = width < height ? 1 + width / height : 1 + height / width;
+    // create Group
+    const group = new THREE.Group();
+  
+    // atoms cordinates
+    const start = new THREE.Vector3();
+    const end = new THREE.Vector3();
+    const pos = new THREE.Vector3();
+  
+    // Add Atoms  instances to our Group
+    for (let i = 0; i < atoms.length; i++) {
+      let atomMesh = new THREE.Mesh(
+        new THREE.SphereGeometry(0.4, 32, 16),
+        new THREE.MeshStandardMaterial({})
+      );
+      pos.x = atoms[i].x;
+      pos.y = atoms[i].y;
+      pos.z = atoms[i].z;
+      pos.multiplyScalar(scale);
+      atomMesh.position.copy(pos);
+      atomMesh.info = atoms[i];
+      atomMesh.material.color.set(atoms[i].color);
+      group.add(atomMesh);
+    }
+  
+    // Add Connections  instances to our Group
+    for (let i = 0; i < connect.length; i++) {
+      for (let j = 1; j < connect[i].length; j++) {
+        const initCords = Number(connect[i][0]) - 1;
+        const nextCords = Number(connect[i][j]) - 1;
+        if (initCords < atoms.length - 1 && nextCords < atoms.length) {
+          start.x = atoms[initCords].x;
+          start.y = atoms[initCords].y;
+          start.z = atoms[initCords].z;
+          end.x = atoms[nextCords].x;
+          end.y = atoms[nextCords].y;
+          end.z = atoms[nextCords].z;
+          start.multiplyScalar(scale);
+          end.multiplyScalar(scale);
+          const geoBox = new THREE.BoxGeometry(0.2, 0.2, start.distanceTo(end));
+          const cylinder = new THREE.Mesh(
+            geoBox,
+            new THREE.MeshPhongMaterial({ color: 0xffffff })
+          );
+          const mid = start;
+          mid.lerp(end, 0.5);
+          cylinder.position.copy(mid);
+          cylinder.lookAt(end);
+  
+          group.add(cylinder);
+        }
+      }
+    }
+    // Add Connections  instances to our Group
+    for (let i = 0; i < connect.length; i++) {
+      for (let j = 1; j < connect[i].length; j++) {
+        const initCords = Number(connect[i][0]) - 1;
+        const nextCords = Number(connect[i][j]) - 1;
+        if (initCords < atoms.length - 1 && nextCords < atoms.length) {
+          start.x = atoms[initCords].x;
+          start.y = atoms[initCords].y;
+          start.z = atoms[initCords].z;
+          end.x = atoms[nextCords].x;
+          end.y = atoms[nextCords].y;
+          end.z = atoms[nextCords].z;
+          start.multiplyScalar(scale);
+          end.multiplyScalar(scale);
+          const geoBox = new THREE.BoxGeometry(0.2, 0.2, start.distanceTo(end));
+          const cylinder = new THREE.Mesh(
+            geoBox,
+            new THREE.MeshPhongMaterial({ color: 0xffffff })
+          );
+          const mid = start;
+          mid.lerp(end, 0.5);
+          cylinder.position.copy(mid);
+          cylinder.lookAt(end);
+  
+          group.add(cylinder);
+        }
+      }
+    }
+  
+    return group;
+  };
+  
+  export default setGeometries;
