@@ -12,7 +12,7 @@ const setGeometries = ({ atoms, connect, width, height }) => {
     for (let i = 0; i < atoms.length; i++) {
       let atomMesh = new THREE.Mesh(
         new THREE.SphereGeometry(0.4, 32, 16),
-        new THREE.MeshStandardMaterial({})
+        new THREE.MeshPhongMaterial({})
       );
       pos.x = atoms[i].x;
       pos.y = atoms[i].y;

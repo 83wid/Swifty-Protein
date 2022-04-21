@@ -16,6 +16,8 @@
     "axios": "^0.26.1",
     "expo": "~44.0.0",
     "expo-gl": "^11.1.2",
+    "expo-media-library": "^14.0.1",
+    "expo-sharing": "^10.1.1",
     "expo-status-bar": "~1.2.0",
     "expo-three": "^6.1.0",
     "expo-three-orbit-controls": "^2.0.0",
