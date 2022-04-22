@@ -2,6 +2,8 @@ import { View, FlatList, StyleSheet, Text, Image, Pressable, Alert } from 'react
 import { useEffect, useState, useRef } from 'react';
 import Feather from "react-native-vector-icons/Feather";
 import * as Network from 'expo-network';
+import { atomsParse } from "../../Helpers/atomsParse";
+import { connectParse } from "../../Helpers/connectParse";
 import axios from 'axios';
 
 export default function FlatListComponent({ navigation, DATA }) {
@@ -18,7 +20,8 @@ export default function FlatListComponent({ navigation, DATA }) {
         axios(url1)
           .then((res) => {
             if (res.data) {
-              navigation.navigate('Ligand', { name: ligand, data: res.data });
+              const data = {atoms: atomsParse(res.data), connects: connectParse(res.data)};
+              navigation.navigate('Ligand', { name: ligand, data: data });
             }
           })
           .catch((er) => alert(er));

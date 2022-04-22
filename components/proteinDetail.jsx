@@ -28,7 +28,7 @@ export const ProteinDetail = ({ atom }) => {
       setAtomDetail([])
       return;
     }
-    axios.get(`https://neelpatel05.pythonanywhere.com/element/symbol?symbol=${atom.toUpperCase()}`)
+    axios.get(`https://neelpatel05.pythonanywhere.com/element/symbol?symbol=${atom.name.toUpperCase()}`)
       .then(res => {
         setAtomDetail(res.data)
       })
@@ -46,9 +46,9 @@ export const ProteinDetail = ({ atom }) => {
           <View style={styles.atomDetailContainer}>
             <Text style={{ fontSize: 13 }}>Coordinates :</Text>
             <View style={styles.coordinatesContainer}>
-              <Coordinate coordLabel="X" coord={100} />
-              <Coordinate coordLabel="Y" coord={20} />
-              <Coordinate coordLabel="Z" coord={8} />
+              <Coordinate coordLabel="X" coord={Math.floor(atom.x)} />
+              <Coordinate coordLabel="Y" coord={Math.floor(atom.y)} />
+              <Coordinate coordLabel="Z" coord={Math.floor(atom.z)} />
             </View>
           </View>
           <View style={styles.proteinContainer}>
