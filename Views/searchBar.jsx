@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Button, StyleSheet, TextInput, View } from "react-native";
 import axios from "axios";
-import { atomsParse } from "./Helpers/atomsParse";
-import { connectParse } from "./Helpers/connectParse";
+import { atomsParse } from "../Helpers/atomsParse";
+import { connectParse } from "../Helpers/connectParse";
 
 
 

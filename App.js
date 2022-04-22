@@ -1,8 +1,8 @@
 import React from "react";
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import SearchBar from "./searchBar";
-import Protein from "./proteinView";
+import SearchBar from "./Views/searchBar";
+import Protein from "./Views/proteinView";
 
 const Stack = createNativeStackNavigator();
 

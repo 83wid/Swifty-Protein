@@ -10,10 +10,10 @@ import {
 } from "react-native";
 import { GLView } from "expo-gl";
 import { Renderer } from "expo-three";
-import OrbitControlsView from "./controls/OrbitControlsView";
+import OrbitControlsView from "../Components/OrbitControlsView";
 
 import { AmbientLight, PerspectiveCamera, Scene, SpotLight } from "three";
-import setGeometries from "./Helpers/setGeometries";
+import setGeometries from "../Helpers/setGeometries";
 import ViewShot from "react-native-view-shot";
 import * as MediaLibrary from "expo-media-library";
 

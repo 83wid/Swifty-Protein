@@ -1,3 +1,5 @@
+import {colors2} from './colors';
+
 const setGeometries = ({ atoms, connect, width, height, model }) => {
   const scale = width < height ? 1 + width / height : 1 + height / width;
   // create Group
@@ -21,7 +23,7 @@ const setGeometries = ({ atoms, connect, width, height, model }) => {
       pos.multiplyScalar(scale);
       atomMesh.position.copy(pos);
       atomMesh.info = atoms[i];
-      atomMesh.material.color.set(atoms[i].color);
+      atomMesh.material.color.set(colors2[atoms[i].name].jmol);
       group.add(atomMesh);
     }
   }
@@ -40,17 +42,17 @@ const setGeometries = ({ atoms, connect, width, height, model }) => {
           end.z = atoms[nextCords].z;
           start.multiplyScalar(scale);
           end.multiplyScalar(scale);
-          const geoBox = new THREE.BoxGeometry(0.2, 0.2, start.distanceTo(end));
-          const cylinder = new THREE.Mesh(
-            geoBox,
+          const geometry = new THREE.BoxGeometry(0.2, 0.2, start.distanceTo(end));
+          const box = new THREE.Mesh(
+            geometry,
             new THREE.MeshPhongMaterial({ color: 0xffffff })
           );
           const mid = start;
           mid.lerp(end, 0.5);
-          cylinder.position.copy(mid);
-          cylinder.lookAt(end);
+          box.position.copy(mid);
+          box.lookAt(end);
 
-          group.add(cylinder);
+          group.add(box);
         }
       }
     }
@@ -70,22 +72,22 @@ const setGeometries = ({ atoms, connect, width, height, model }) => {
           end.z = atoms[nextCords].z;
           start.multiplyScalar(scale);
           end.multiplyScalar(scale);
-          const geoBox = new THREE.CylinderGeometry(
+          const geometry = new THREE.CylinderGeometry(
             0.2,
             0.2,
-            start.distanceTo(end)
+            start.distanceTo(end),
+            64,
           );
           const sub = new THREE.Vector3();
           sub.subVectors(end, start).normalize();
-          geoBox.applyQuaternion(
+          geometry.applyQuaternion(
             new THREE.Quaternion().setFromUnitVectors(
               new THREE.Vector3(0, 1, 0),
               sub
             )
           );
-          console.log(geoBox);
           const cylinder = new THREE.Mesh(
-            geoBox,
+            geometry,
             new THREE.MeshPhongMaterial({ color: 0xffffff })
           );
           const mid = start;

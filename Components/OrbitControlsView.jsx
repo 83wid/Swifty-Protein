@@ -1,6 +1,6 @@
 import * as React from "react";
 import { View, Platform, PanResponder, Pressable } from "react-native";
-import { OrbitControls } from "./OrbitControls.js";
+import { OrbitControls } from "../Helpers/controls/OrbitControls.js";
 function polyfillEventTouches(nativeEvent) {
   if (Platform.OS === "web") return nativeEvent;
   if (!Array.isArray(nativeEvent.touches)) nativeEvent.touches = [];
