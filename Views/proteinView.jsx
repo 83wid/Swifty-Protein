@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import {
   Share,
   Alert,
@@ -16,24 +16,34 @@ import { AmbientLight, PerspectiveCamera, Scene, SpotLight } from "three";
 import setGeometries from "../Helpers/setGeometries";
 import ViewShot from "react-native-view-shot";
 import * as MediaLibrary from "expo-media-library";
+import { HooksPovider, ProteinHookContext } from "../Contexts/proteinHooksContext";
 
 const raycaster = new THREE.Raycaster();
 
-export default function Protein({ navigation, route }) {
+
+export default function Protein(props)  {
+  return (
+    <HooksPovider>
+      <ProteinView {...props} />
+    </HooksPovider>
+  )
+}
+
+function ProteinView({ navigation, route }) {
   const atoms = route.params.atoms;
   const connect = route.params.connects;
   const [width, setWidth] = useState(Dimensions.get("screen").width);
   const [height, setHeight] = useState(Dimensions.get("screen").height);
+  const {model, setModel } = useContext(ProteinHookContext);
   const renderRef = React.useRef(null);
-
+  
   //Create Camera
   const [camera, setCamera] = useState(
     new PerspectiveCamera(75, width / height, 0.01, 1000)
-  );
-
-  // set Atoms and Connects to a group
-  const model = 1;
-  const group = setGeometries({ atoms, connect, width, height, model});
+    );
+    
+    // set Atoms and Connects to a group
+    const group = setGeometries({ atoms, connect, width, height, model,  rasmol:true});
 
   // Create scene
   const scene = new Scene();
@@ -102,9 +112,14 @@ export default function Protein({ navigation, route }) {
       if (camera.fov + 5 < 120) camera.fov += 5;
     }
     camera.updateProjectionMatrix();
-    setCamera(camera);
-    renderRef.current?.render(scene, camera);
+    // setCamera(camera);
   };
+
+  const handelColor = (value) => {
+    const protein = setGeometries({ atoms, connect, width, height, model, rasmol:value});
+            group.remove(...group.children);
+            group.add(...protein.children);
+  }
 
   return (
     <View style={{ flex: 1 }}>
@@ -116,7 +131,7 @@ export default function Protein({ navigation, route }) {
         >
           {true ? (
             <GLView
-              key={renderRef.current}
+              key={group, renderRef.current}
               style={{
                 width: Dimensions.get("screen").width,
                 height: Dimensions.get("screen").height,
@@ -127,8 +142,6 @@ export default function Protein({ navigation, route }) {
                   drawingBufferHeight: height,
                 } = gl;
                 gl.viewport(0, 0, width, height);
-
-
                 // Create lights
 
                 // spotlight
@@ -236,6 +249,20 @@ export default function Protein({ navigation, route }) {
           }}
         >
           <Text>Take Snapshot</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+        style={{
+        }}
+          onPress={() => handelColor(true)}
+        >
+          <Text>rasmol</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+        style={{
+        }}
+          onPress={() => handelColor(false)}
+        >
+          <Text>jmol</Text>
         </TouchableOpacity>
       </View>
     </View>

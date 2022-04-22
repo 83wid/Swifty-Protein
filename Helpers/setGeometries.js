@@ -1,6 +1,6 @@
-import {colors2} from './colors';
+import { colors } from "./colors";
 
-const setGeometries = ({ atoms, connect, width, height, model }) => {
+const setGeometries = ({ atoms, connect, width, height, model, rasmol }) => {
   const scale = width < height ? 1 + width / height : 1 + height / width;
   // create Group
   const group = new THREE.Group();
@@ -14,7 +14,9 @@ const setGeometries = ({ atoms, connect, width, height, model }) => {
   if (model != 2) {
     for (let i = 0; i < atoms.length; i++) {
       let atomMesh = new THREE.Mesh(
-        model == 1 ? new THREE.SphereGeometry(0.4, 32, 16) : new THREE.BoxGeometry(0.6, 0.6, 0.6),
+        model == 1
+          ? new THREE.SphereGeometry(0.4, 32, 16)
+          : new THREE.BoxGeometry(0.6, 0.6, 0.6),
         new THREE.MeshPhongMaterial({})
       );
       pos.x = atoms[i].x;
@@ -23,7 +25,9 @@ const setGeometries = ({ atoms, connect, width, height, model }) => {
       pos.multiplyScalar(scale);
       atomMesh.position.copy(pos);
       atomMesh.info = atoms[i];
-      atomMesh.material.color.set(colors2[atoms[i].name].jmol);
+      atomMesh.material.color.set(
+        rasmol ? colors[atoms[i].name].rasmol : colors[atoms[i].name].jmol
+      );
       group.add(atomMesh);
     }
   }
@@ -42,7 +46,11 @@ const setGeometries = ({ atoms, connect, width, height, model }) => {
           end.z = atoms[nextCords].z;
           start.multiplyScalar(scale);
           end.multiplyScalar(scale);
-          const geometry = new THREE.BoxGeometry(0.2, 0.2, start.distanceTo(end));
+          const geometry = new THREE.BoxGeometry(
+            0.2,
+            0.2,
+            start.distanceTo(end)
+          );
           const box = new THREE.Mesh(
             geometry,
             new THREE.MeshPhongMaterial({ color: 0xffffff })
@@ -76,7 +84,7 @@ const setGeometries = ({ atoms, connect, width, height, model }) => {
             0.2,
             0.2,
             start.distanceTo(end),
-            64,
+            64
           );
           const sub = new THREE.Vector3();
           sub.subVectors(end, start).normalize();
