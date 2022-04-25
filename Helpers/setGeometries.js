@@ -56,7 +56,7 @@ const setGeometries = ({ atoms, connects, width, height, model, rasmol }) => {
           );
           const box = new THREE.Mesh(
             geometry,
-            new THREE.MeshPhongMaterial({ color: 0xffffff })
+            new THREE.MeshPhongMaterial({ color: rasmol ? 0xffffff : 0xE9DCC9 })
           );
           const mid = start;
           mid.lerp(end, 0.5);
@@ -99,7 +99,7 @@ const setGeometries = ({ atoms, connects, width, height, model, rasmol }) => {
           );
           const cylinder = new THREE.Mesh(
             geometry,
-            new THREE.MeshPhongMaterial({ color: 0xffffff })
+            new THREE.MeshPhongMaterial({ color: rasmol ? 0xffffff : 0xE9DCC9 })
           );
           const mid = start;
           mid.lerp(end, 0.5);

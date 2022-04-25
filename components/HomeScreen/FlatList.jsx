@@ -1,31 +1,33 @@
-import { View, FlatList, StyleSheet, Text, Image, Pressable, Alert } from 'react-native';
-import { useEffect, useState, useRef } from 'react';
+import { View, FlatList, StyleSheet, Text, Image, Pressable, Alert, ActivityIndicator } from 'react-native';
+import { useEffect, useState, useRef, useContext } from 'react';
 import Feather from "react-native-vector-icons/Feather";
 import * as Network from 'expo-network';
 import { atomsParse } from "../../Helpers/atomsParse";
 import { connectParse } from "../../Helpers/connectParse";
 import axios from 'axios';
+import { LigandContext } from "../../context/state";
 
 export default function FlatListComponent({ navigation, DATA }) {
-  const [scrollEnabled, setScrollEnabled] = useState(true);
-  const [flatHeight, setFlatHeight] = useState({
-    flatContainer: 0,
-    flatList: 0,
-  })
+  const [loading, setLoading] = useState(null);
+  const value = useContext(LigandContext);
 
   const checkNetwork = async (ligand) => {
     await Network.getNetworkStateAsync().then(res => {
+      setLoading(true);
       if (res.isConnected) {
         const url1 = `https://files.rcsb.org/ligands/view/${ligand}_model.pdb`;
         axios(url1)
           .then((res) => {
             if (res.data) {
-              const data = {atoms: atomsParse(res.data), connects: connectParse(res.data)};
+              const data = { atoms: atomsParse(res.data), connects: connectParse(res.data) };
+              setLoading(false);
+              value.state.setLigand(ligand);
               navigation.navigate('Ligand', { name: ligand, data: data });
             }
           })
           .catch((er) => alert(er));
       } else {
+        setLoading(null);
         Alert.alert(
           'No Internet Connection',
           'Please check your internet connection',
@@ -67,43 +69,34 @@ export default function FlatListComponent({ navigation, DATA }) {
     )
   }
 
-  const onLayoutFlatList = (event) => {
-    const height = event.nativeEvent.layout.height;
-    setFlatHeight({
-      ...flatHeight,
-      flatList: height,
-    })
-  }
-
-  const onLayoutContainer = (event) => {
-    const height = event.nativeEvent.layout.height;
-    setFlatHeight({
-      ...flatHeight,
-      flatContainer: height,
-    })
-  }
-
-  useEffect(() => {
-    if (flatHeight.flatContainer > 61 * DATA.length || DATA.length <= 0)
-      setScrollEnabled(false);
-    else
-      setScrollEnabled(true);;
-  }, [flatHeight, DATA.length])
-
   return (
-    <View style={styles.ligandsContainer} onLayout={onLayoutContainer} >
-      <FlatList
-        onLayout={onLayoutFlatList}
-        data={DATA}
-        renderItem={renderItem}
-        keyExtractor={(item) => DATA.indexOf(item)}
-        initialNumToRender={10}
-        showsVerticalScrollIndicator={false}
-        scrollEnabled={scrollEnabled}
-        ListEmptyComponent={ListEmptyComponent}
-        contentContainerStyle={{ flexGrow: 1 }}
-      />
-    </View>
+    <>
+      {loading && <ActivityIndicator
+        size="large"
+        color="#fff"
+        animating={loading}
+        style={{
+          position: 'absolute',
+          backgroundColor: 'rgba(52, 52, 52, 0.8)',
+          width: '100%',
+          height: '100%',
+          justifyContent: 'center',
+          alignItems: 'center',
+          zIndex: 1,
+        }}
+      />}
+      <View style={styles.ligandsContainer} >
+        <FlatList
+          data={DATA}
+          renderItem={renderItem}
+          keyExtractor={(item) => DATA.indexOf(item)}
+          initialNumToRender={10}
+          showsVerticalScrollIndicator={false}
+          ListEmptyComponent={ListEmptyComponent}
+          contentContainerStyle={{ flexGrow: 1 }}
+        />
+      </View>
+    </>
   )
 }
 

@@ -2,11 +2,11 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Login from "./Views/Login";
 import Home from "./Views/Home";
+import Ligand from "./Views/Ligand";
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect, useState, useRef } from 'react';
 import AnimatedSplash from "react-native-animated-splash-screen";
 import { AppState } from "react-native";
-import Ligand from "./components/Ligand";
 import { navigationRef } from './components/RootNavigation';
 import { AppWrapper } from "./context/state";
 

@@ -907,14 +907,14 @@ export class OrbitControls extends EventDispatcher {
           // orthographic
           this.panLeft(
             (deltaX * (this.object.right - this.object.left)) /
-              this.object.zoom /
-              this.getElementWidth(),
+            this.object.zoom /
+            this.getElementWidth(),
             this.object.matrix
           );
           this.panUp(
             (deltaY * (this.object.top - this.object.bottom)) /
-              this.object.zoom /
-              this.getElementHeight(),
+            this.object.zoom /
+            this.getElementHeight(),
             this.object.matrix
           );
         } else {

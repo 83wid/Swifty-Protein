@@ -6,7 +6,7 @@ const Coordinate = ({ coordLabel, coord }) => {
   return (
     <View style={styles.coordinateContainer}>
       <Text style={styles.coordinateLabel}>{coordLabel} :</Text>
-      <Text style={styles.coordinate}>{coord}</Text>
+      <Text style={styles.coordinate}>{parseFloat(coord?.toFixed(2))}</Text>
     </View>
   )
 }
@@ -20,18 +20,19 @@ const AtomDetail = ({ DataType, DataValue, AddedStyle }) => {
   )
 }
 
-export const ProteinDetail = ({ atom }) => {
+export const ProteinDetail = ({ atom, CoordX, CoordY, CoordZ }) => {
   const [atomDetail, setAtomDetail] = useState([])
 
   useEffect(() => {
-    if (atom === "") {
+    if (atom === "" || atom === undefined) {
       setAtomDetail([])
-      return;
     }
-    axios.get(`https://neelpatel05.pythonanywhere.com/element/symbol?symbol=${atom.name.toUpperCase()}`)
-      .then(res => {
-        setAtomDetail(res.data)
-      })
+    else {
+      axios.get(`https://neelpatel05.pythonanywhere.com/element/symbol?symbol=${atom?.toUpperCase()}`)
+        .then(res => {
+          setAtomDetail(res.data)
+        })
+    }
   }, [atom])
 
   return (
@@ -46,9 +47,9 @@ export const ProteinDetail = ({ atom }) => {
           <View style={styles.atomDetailContainer}>
             <Text style={{ fontSize: 13 }}>Coordinates :</Text>
             <View style={styles.coordinatesContainer}>
-              <Coordinate coordLabel="X" coord={Math.floor(atom.x)} />
-              <Coordinate coordLabel="Y" coord={Math.floor(atom.y)} />
-              <Coordinate coordLabel="Z" coord={Math.floor(atom.z)} />
+              <Coordinate coordLabel="X" coord={CoordX} />
+              <Coordinate coordLabel="Y" coord={CoordY} />
+              <Coordinate coordLabel="Z" coord={CoordZ} />
             </View>
           </View>
           <View style={styles.proteinContainer}>
@@ -126,7 +127,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   coordinate: {
-    fontSize: 14,
+    fontSize: 10,
     color: "#000",
     fontWeight: "bold",
     paddingLeft: 3,

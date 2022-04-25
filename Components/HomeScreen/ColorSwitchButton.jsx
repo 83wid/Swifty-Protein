@@ -2,17 +2,17 @@ import { View, Text, TouchableWithoutFeedback, Animated, Easing } from "react-na
 import { useRef, useEffect, useState, useContext } from 'react';
 import { LigandContext } from "../../context/state";
 
-export default function SwitchButton({ addedStyle, items }) {
-  const [indicatorTransition, setIndicatorTransition] = useState(45);
+export default function ColorSwitchButton({ addedStyle, items }) {
+  const [indicatorTransition, setIndicatorTransition] = useState(null);
   const translation = useRef(new Animated.Value(0)).current;
   const [buttonWidth, setButtonWidth] = useState(0);
   const value = useContext(LigandContext);
-  const setLigandMode = value.state.setLigandMode;
-  const ligandmode = value.state.ligandmode;
+  const setColorMode = value.state.setColorMode;
+  const colorMode = value.state.colorMode;
 
   useEffect(() => {
     Animated.timing(translation, {
-      toValue: 45 * ligandmode,
+      toValue: 65 * colorMode,
       duration: 300,
       useNativeDriver: true,
       easing: Easing.ease,
@@ -35,7 +35,7 @@ export default function SwitchButton({ addedStyle, items }) {
           <TouchableWithoutFeedback
             onPress={() => {
               setIndicatorTransition(buttonWidth * index);
-              setLigandMode(item.value);
+              setColorMode(item.value);
             }}
             onLayout={(e) => {
               setButtonWidth(e.nativeEvent.layout.width);
@@ -44,7 +44,7 @@ export default function SwitchButton({ addedStyle, items }) {
           >
             <View
               style={{
-                width: 45,
+                width: 65,
                 height: 35,
                 alignItems: 'center',
                 justifyContent: 'center',

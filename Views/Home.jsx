@@ -1,23 +1,27 @@
 import FlatListComponent from '../components/HomeScreen/FlatList';
 import { View, StyleSheet, Text, TextInput, SafeAreaView, StatusBar, Keyboard, Dimensions } from 'react-native';
-import { useEffect, useState, useRef } from 'react';
-import useOrientation from '../Hooks/useOrientation';
+import { useEffect, useState, useRef, useContext } from 'react';
+// import useOrientation from '../Hooks/useOrientation';
 
-const data = require('../assets/ligands.json');
+// const data = require('../assets/ligands.json');
+import { LigandContext } from "../context/state";
 
 export default function Home({ navigation }) {
-  const [sortData, setSortData] = useState([]);
   const [search, setSearch] = useState('');
-  const orientation = useOrientation();
+  const value = useContext(LigandContext);
+  const data = value.state.data;
+  const [sortData, setSortData] = useState(data);
+  // const orientation = useOrientation();
+  console.log("here");
 
   const handleOutsideClick = (e) => {
     Keyboard.dismiss();
     setSearch('');
   }
 
-  useEffect(() => {
-    setSortData(data);
-  }, [data]);
+  // useEffect(() => {
+  //   setSortData(data);
+  // }, [data]);
 
   useEffect(() => {
     if (search.length > 0) {
@@ -35,7 +39,7 @@ export default function Home({ navigation }) {
   return (
     <View navigation={navigation} style={{
       ...styles.container,
-      paddingVertical: orientation === "portrait" ? 0 : 20,
+      // paddingVertical: orientation === "portrait" ? 0 : 20,
     }}
     >
       <StatusBar barStyle="light-content" />
