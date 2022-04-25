@@ -22,6 +22,7 @@ import { LigandContext } from "../context/state";
 import ZoomButtons from "./HomeScreen/ZoomButtons";
 import BottomHalfModal from "./HomeScreen/modal";
 import ShareButtons from "./HomeScreen/ShareButtons";
+import { OrbitControls } from "../Helpers/controls/OrbitControls";
 
 const raycaster = new THREE.Raycaster();
 
@@ -179,6 +180,9 @@ export default function Protein({ atoms, connects }) {
                 // Add Group to Scene
                 scene.add(group);
 
+                // Create OrbitControls
+                const controls = new OrbitControls(camera, renderer.domElement);
+
                 // Render function
                 const render = () => {
                   spotLight.position.set(
@@ -186,6 +190,7 @@ export default function Protein({ atoms, connects }) {
                     camera.position.y,
                     camera.position.z
                   );
+                  controls.update();
                   requestAnimationFrame(render);
                   renderer.render(scene, camera);
                   gl.endFrameEXP();
