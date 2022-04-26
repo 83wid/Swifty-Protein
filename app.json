@@ -1,0 +1,27 @@
+{
+  "expo": {
+    "name": "Swifty-Protein",
+    "slug": "Swifty-Protein",
+    "version": "1.0.0",
+    "orientation": "default",
+    "icon": "./assets/LogoWhite.png",
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "splash": {},
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#FFFFFF"
+      }
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "description": ""
+  }
+}
