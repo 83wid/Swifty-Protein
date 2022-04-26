@@ -59,8 +59,9 @@ export default function Protein({ atoms, connects }) {
     group.remove(...group.children);
     group.add(...protein.children);
     glViewRef.current = glViewRef.current + 1;
+    renderRef.current = renderRef.current + 1;
     setLoading(false);
-  }, [ligandmode, colorMode]);
+  }, [ligandmode, colorMode, orientation]);
 
   // console.log("ligandmode", ligandmode);
 
@@ -114,12 +115,12 @@ export default function Protein({ atoms, connects }) {
     // setCamera(camera);
   };
 
-  useEffect(() => {
-    glViewRef.current = glViewRef.current + 1;
-    setWidth(Dimensions.get("screen").width);
-    setHeight(Dimensions.get("screen").height);
-    console.log("-------------------------orientation------------------------");
-  }, [orientation]);
+  // useEffect(() => {
+  //   glViewRef.current = glViewRef.current + 1;
+  //   // setWidth(Dimensions.get("screen").width);
+  //   // setHeight(Dimensions.get("screen").height);
+  //   console.log("-------------------------orientation------------------------");
+  // }, [orientation]);
 
   return (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
@@ -133,8 +134,8 @@ export default function Protein({ atoms, connects }) {
             <GLView
               key={glViewRef.current}
               style={{
-                width: orientation === "portrait" ? Dimensions.get("screen").width : Dimensions.get("screen").width,
-                height: orientation === "portrait" ? Dimensions.get("screen").height : Dimensions.get("screen").height,
+                width: Dimensions.get("screen").width,
+                height:  Dimensions.get("screen").height,
               }}
               onContextCreate={async (gl) => {
                 const {
@@ -179,7 +180,7 @@ export default function Protein({ atoms, connects }) {
 
                 // Add Group to Scene
                 scene.add(group);
-
+                console.log("scene", scene.children);
                 // Create OrbitControls
                 const controls = new OrbitControls(camera, renderer.domElement);
 

@@ -19,8 +19,8 @@ export default function Ligand({ navigation, route }) {
       ...styles.ligandPage,
       // width: orientation === 'portrait' ? width : width,
       // height: orientation === "portrait" ? height : height,
-      width: width,
-      height: height,
+      // width: width,
+      // height: height,
     }}
       ref={containers}
     >
@@ -39,8 +39,8 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     position: "relative",
     alignItems: "center",
-    // width: "100%",
-    // height: "100%"
+    width: "100%",
+    height: "100%"
   },
   content: {
     backgroundColor: "#000",
