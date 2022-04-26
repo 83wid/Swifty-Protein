@@ -17,10 +17,6 @@ export default function Ligand({ navigation, route }) {
   return (
     <View style={{
       ...styles.ligandPage,
-      // width: orientation === 'portrait' ? width : width,
-      // height: orientation === "portrait" ? height : height,
-      // width: width,
-      // height: height,
     }}
       ref={containers}
     >

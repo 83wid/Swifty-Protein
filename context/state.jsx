@@ -1,5 +1,6 @@
 import { createContext, useState } from "react";
 import useOrientation from "../Hooks/useOrientation";
+import { Renderer } from "expo-three";
 
 export const LigandContext = createContext();
 
@@ -8,6 +9,7 @@ export function AppWrapper({ children }) {
   const [colorMode, setColorMode] = useState(0);
   const [ligand, setLigand] = useState("");
   const orientation = useOrientation();
+  const [scene, setscene] = useState(new THREE.Scene());
 
   return (
     <LigandContext.Provider value={{
@@ -20,6 +22,8 @@ export function AppWrapper({ children }) {
         orientation: orientation,
         ligand: ligand,
         setLigand: setLigand,
+        scene: scene,
+        setScene: setscene,
       },
     }}>
       {children}

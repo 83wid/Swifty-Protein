@@ -48,25 +48,13 @@ export default function Protein({ atoms, connects }) {
   const group = new THREE.Group();
   useEffect(() => {
     setLoading(true);
-    const protein = setGeometries({
-      atoms,
-      connects,
-      width,
-      height,
-      model: ligandmode,
-      rasmol: colorMode === 0 ? true : false,
-    });
-    group.remove(...group.children);
-    group.add(...protein.children);
     glViewRef.current = glViewRef.current + 1;
     renderRef.current = renderRef.current + 1;
     setLoading(false);
   }, [ligandmode, colorMode, orientation]);
 
-  // console.log("ligandmode", ligandmode);
-
-  // Create scene
   const scene = new Scene();
+  // Create scene
 
   useEffect(() => {
     // set camera position and look at center of screen
@@ -114,13 +102,6 @@ export default function Protein({ atoms, connects }) {
     camera.updateProjectionMatrix();
     // setCamera(camera);
   };
-
-  // useEffect(() => {
-  //   glViewRef.current = glViewRef.current + 1;
-  //   // setWidth(Dimensions.get("screen").width);
-  //   // setHeight(Dimensions.get("screen").height);
-  //   console.log("-------------------------orientation------------------------");
-  // }, [orientation]);
 
   return (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
@@ -179,8 +160,16 @@ export default function Protein({ atoms, connects }) {
                 renderRef.current = renderer;
 
                 // Add Group to Scene
+                const group = setGeometries({
+                  atoms,
+                  connects,
+                  width,
+                  height,
+                  model: ligandmode,
+                  rasmol: colorMode === 0 ? true : false,
+                });
                 scene.add(group);
-                console.log("scene", scene.children);
+                // console.log("scene", scene.children);
                 // Create OrbitControls
                 const controls = new OrbitControls(camera, renderer.domElement);
 
