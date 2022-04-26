@@ -65,7 +65,7 @@ export default function Login({ navigation }) {
         paddingHorizontal: 40,
       }}>
         <Text style={styles.bigText}>Learn more about Proteins.</Text>
-        <Text style={styles.smallText}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis scelerisque tellus est, non consectetur sem sollicitudin eu. Nulla vitae nulla a lorem fringilla convallis. Integer ut metus molestie</Text>
+        <Text style={styles.smallText}>SwiftyProteins is a visualizer for proteins models according to standardized representation from the famous PDB (Protein Data Bank) using SceneKit.</Text>
         <View style={styles.LoginContainer}>
           {compatible && <Pressable style={styles.BiometricsButton} onPress={onFaceId}>
             <Text style={styles.Biometrics}>Login</Text>
