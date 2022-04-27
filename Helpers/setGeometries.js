@@ -14,7 +14,6 @@ const setGeometries = ({ atoms, connects, width, height, model, rasmol }) => {
 
   // Add Atoms  instances to our Group
   for (let i = 0; i < atoms.length; i++) {
-    console.log(atoms[i].name);
     let atomMesh = new THREE.Mesh(
       model == 0
         ? new THREE.SphereGeometry(scale / 3, 32, 16)
