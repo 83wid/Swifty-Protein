@@ -2,7 +2,8 @@ import { RGBA_ASTC_10x10_Format } from "three";
 import { colors } from "./colors";
 
 const setGeometries = ({ atoms, connects, width, height, model, rasmol }) => {
-  const scale = width < height ? 1 + width / height : 1 + height / width;
+  const scale =  1 + width / height;
+  // const scale = width < height ? 1 + width / height : height / width;
   // create Group
   const group = new THREE.Group();
 
@@ -13,10 +14,11 @@ const setGeometries = ({ atoms, connects, width, height, model, rasmol }) => {
 
   // Add Atoms  instances to our Group
   for (let i = 0; i < atoms.length; i++) {
+    console.log(atoms[i].name);
     let atomMesh = new THREE.Mesh(
       model == 0
-        ? new THREE.SphereGeometry(0.4, 32, 16)
-        : new THREE.BoxGeometry(0.6, 0.6, 0.6),
+        ? new THREE.SphereGeometry(scale / 3, 32, 16)
+        : new THREE.BoxGeometry(scale / 3, scale / 3, scale / 3),
       new THREE.MeshPhongMaterial({
         color: rasmol
           ? colors[atoms[i].name].rasmol
@@ -25,6 +27,7 @@ const setGeometries = ({ atoms, connects, width, height, model, rasmol }) => {
         opacity: model == 1 ? 0 : model == 0 ? 1 : 0.8,
       })
     );
+
     pos.x = atoms[i].x;
     pos.y = atoms[i].y;
     pos.z = atoms[i].z;
@@ -50,8 +53,8 @@ const setGeometries = ({ atoms, connects, width, height, model, rasmol }) => {
           start.multiplyScalar(scale);
           end.multiplyScalar(scale);
           const geometry = new THREE.BoxGeometry(
-            0.2,
-            0.2,
+            scale / 10,
+            scale / 10,
             start.distanceTo(end)
           );
           const box = new THREE.Mesh(
@@ -62,7 +65,6 @@ const setGeometries = ({ atoms, connects, width, height, model, rasmol }) => {
           mid.lerp(end, 0.5);
           box.position.copy(mid);
           box.lookAt(end);
-
           group.add(box);
         }
       }
@@ -84,8 +86,8 @@ const setGeometries = ({ atoms, connects, width, height, model, rasmol }) => {
           start.multiplyScalar(scale);
           end.multiplyScalar(scale);
           const geometry = new THREE.CylinderGeometry(
-            0.2,
-            0.2,
+            scale / 10,
+            scale / 10,
             start.distanceTo(end),
             64
           );

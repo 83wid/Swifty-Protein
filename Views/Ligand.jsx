@@ -2,8 +2,6 @@ import { View, StyleSheet, StatusBar, Dimensions, Text } from "react-native";
 import useOrientation from '../Hooks/useOrientation';
 import { useEffect, useRef } from 'react';
 import { useHeaderHeight } from '@react-navigation/elements';
-import ZoomButtons from "../components/HomeScreen/ZoomButtons";
-import BottomHalfModal from "../components/HomeScreen/modal";
 import ProteinView from "../components/ProteinView";
 
 export default function Ligand({ navigation, route }) {

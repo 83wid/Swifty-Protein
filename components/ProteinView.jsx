@@ -168,6 +168,7 @@ export default function Protein({ atoms, connects }) {
                   model: ligandmode,
                   rasmol: colorMode === 0 ? true : false,
                 });
+                scene.remove(scene.children);
                 scene.add(group);
                 // console.log("scene", scene.children);
                 // Create OrbitControls

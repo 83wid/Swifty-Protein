@@ -15,7 +15,7 @@ export default function FlatListComponent({ navigation, DATA }) {
     await Network.getNetworkStateAsync().then(res => {
       setLoading(true);
       if (res.isConnected) {
-        const url1 = `https://files.rcsb.org/ligands/view/${ligand}_model.pdb`;
+        const url1 = `https://files.rcsb.org/ligands/view/${ligand}_ideal.pdb`;
         axios(url1)
           .then((res) => {
             if (res.data) {
