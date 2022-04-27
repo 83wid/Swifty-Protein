@@ -23,6 +23,8 @@ import ZoomButtons from "./HomeScreen/ZoomButtons";
 import BottomHalfModal from "./HomeScreen/modal";
 import ShareButtons from "./HomeScreen/ShareButtons";
 import { OrbitControls } from "../Helpers/controls/OrbitControls";
+import ProteinDetail from "./ProteinDetail";
+import Modal from 'react-native-modal';
 
 const raycaster = new THREE.Raycaster();
 
@@ -37,6 +39,8 @@ export default function Protein({ atoms, connects }) {
   const ligandmode = value.state.ligandmode;
   const colorMode = value.state.colorMode;
   const orientation = value.state.orientation;
+  const selectedAtom = value.state.selectedAtom;
+  const setSelectedAtom = value.state.setSelectedAtom;
   const glViewRef = useRef(0);
 
   //Create Camera
@@ -51,7 +55,7 @@ export default function Protein({ atoms, connects }) {
     glViewRef.current = glViewRef.current + 1;
     renderRef.current = renderRef.current + 1;
     setLoading(false);
-  }, [ligandmode, colorMode, orientation]);
+  }, [ligandmode, colorMode, orientation, selectedAtom]);
 
   const scene = new Scene();
   // Create scene
@@ -76,6 +80,7 @@ export default function Protein({ atoms, connects }) {
       let element = intersects[0].object;
       if (element.info != undefined) {
         console.log("elemet", element.info);
+        setSelectedAtom(element.info);
         Alert.alert(
           "Atom Details",
           `Element : ${element.info["name"]}
@@ -226,7 +231,8 @@ export default function Protein({ atoms, connects }) {
       />
       <ZoomButtons ZoomIn={() => Zoom(true)} ZoomOut={() => Zoom(false)} />
       <ShareButtons renderRef={renderRef} viewShotRef={viewShotRef} />
-      <BottomHalfModal atom="C" CoordX={100} CoordY={50} CoordZ={50} />
+      <BottomHalfModal atom={selectedAtom.name} CoordX={selectedAtom.x} CoordY={selectedAtom.y} CoordZ={selectedAtom.z} />
+      <ProteinDetail atom={selectedAtom}/>
     </View>
   );
 }

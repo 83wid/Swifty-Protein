@@ -9,7 +9,13 @@ export function AppWrapper({ children }) {
   const [colorMode, setColorMode] = useState(0);
   const [ligand, setLigand] = useState("");
   const orientation = useOrientation();
-  const [scene, setscene] = useState(new THREE.Scene());
+  const [selectedAtom, setSelectedAtom] = useState({
+    x: 0,
+    y: 0,
+    z: 0,
+    name: "",
+  });
+  // const [scene, setscene] = useState(new THREE.Scene());
 
   return (
     <LigandContext.Provider value={{
@@ -22,8 +28,8 @@ export function AppWrapper({ children }) {
         orientation: orientation,
         ligand: ligand,
         setLigand: setLigand,
-        scene: scene,
-        setScene: setscene,
+        selectedAtom: selectedAtom,
+        setSelectedAtom: setSelectedAtom,
       },
     }}>
       {children}
