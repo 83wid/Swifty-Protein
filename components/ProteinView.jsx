@@ -81,17 +81,17 @@ export default function Protein({ atoms, connects }) {
       if (element.info != undefined) {
         console.log("elemet", element.info);
         setSelectedAtom(element.info);
-        Alert.alert(
-          "Atom Details",
-          `Element : ${element.info["name"]}
-          x : ${parseFloat(element.info["x"].toFixed(2))}
-          y : ${parseFloat(element.info["y"].toFixed(2))}
-          z : ${parseFloat(element.info["z"].toFixed(2))}`,
-          [
-            { text: "OK", onPress: () => console.log("OK Pressed") },
-          ],
-          { cancelable: false }
-        );
+        // Alert.alert(
+        //   "Atom Details",
+        //   `Element : ${element.info["name"]}
+        //   x : ${parseFloat(element.info["x"].toFixed(2))}
+        //   y : ${parseFloat(element.info["y"].toFixed(2))}
+        //   z : ${parseFloat(element.info["z"].toFixed(2))}`,
+        //   [
+        //     { text: "OK", onPress: () => console.log("OK Pressed") },
+        //   ],
+        //   { cancelable: false }
+        // );
       }
     }
   };
@@ -121,7 +121,7 @@ export default function Protein({ atoms, connects }) {
               key={glViewRef.current}
               style={{
                 width: Dimensions.get("screen").width,
-                height:  Dimensions.get("screen").height,
+                height: Dimensions.get("screen").height,
               }}
               onContextCreate={async (gl) => {
                 const {
@@ -231,8 +231,8 @@ export default function Protein({ atoms, connects }) {
       />
       <ZoomButtons ZoomIn={() => Zoom(true)} ZoomOut={() => Zoom(false)} />
       <ShareButtons renderRef={renderRef} viewShotRef={viewShotRef} />
-      <BottomHalfModal atom={selectedAtom.name} CoordX={selectedAtom.x} CoordY={selectedAtom.y} CoordZ={selectedAtom.z} />
-      <ProteinDetail atom={selectedAtom}/>
+      {selectedAtom && <BottomHalfModal atom={selectedAtom} CoordX={selectedAtom.x} CoordY={selectedAtom.y} CoordZ={selectedAtom.z} />}
+      {/* <ProteinDetail atom={selectedAtom}/> */}
     </View>
   );
 }
