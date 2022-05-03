@@ -1,52 +1,49 @@
-import { View, StyleSheet, Text, Button, SafeAreaView, TouchableOpacity } from 'react-native';
-import { useState, useEffect, useContext } from 'react'
+import { View, StyleSheet, Text, SafeAreaView, TouchableOpacity } from 'react-native';
+import { useState, useEffect } from 'react'
 import Modal from 'react-native-modal';
 import axios from 'axios';
-import { LigandContext } from '../../context/state';
-import XMLParser from 'react-xml-parser';
-import * as Linking from 'expo-linking';
 import Ionicons from "react-native-vector-icons/Ionicons";
+
+const Coordinate = ({ coordLabel, coord }) => {
+  return (
+    <View style={styles.coordinateContainer}>
+      <Text style={styles.coordinateLabel}>{coordLabel} :</Text>
+      <Text style={styles.coordinate}>{coord.toFixed(2)}</Text>
+    </View>
+  )
+}
 
 const AtomDetail = ({ DataType, DataValue, AddedStyle }) => {
   return (
-    <View style={AddedStyle}>
+    <View>
       <Text style={{ fontSize: 7, color: "#7F7F7F" }}>{DataType}</Text>
       <Text style={{ marginLeft: 4, }}>{DataValue}</Text>
     </View>
   )
 }
 
-export default function BottomHalfModal() {
+export default function BottomHalfModal({ atom }) {
   const [isModalVisible, setIsModalVisible] = useState(true);
   const closeModal = () => setIsModalVisible(false);
   const openModal = () => setIsModalVisible(true);
-  const value = useContext(LigandContext);
-  const ligand = value.state.ligand;
-
-  const [ligandDetail, setLigandDetail] = useState([])
+  const [atomDetail, setAtomDetail] = useState([])
 
   useEffect(() => {
-    const url2 = `https://files.rcsb.org/ligands/${ligand[0]}/${ligand}/${ligand}.xml`;
-    axios(url2)
-      .then((res) => {
-        if (res.data) {
-          var xml = new XMLParser().parseFromString(res.data); // parse the XML
-          const ligandDetail = {
-            type: xml.getElementsByTagName('PDBx:type')[0].value || 'Unknown',
-            formula: xml.getElementsByTagName('PDBx:formula')[0].value || 'Unknown',
-            formula_weight: xml.getElementsByTagName('PDBx:formula_weight')[0].value || 'Unknown',
-            three_letter_code: xml.getElementsByTagName('PDBx:three_letter_code')[0].value || 'Unknown',
-          }
-          setLigandDetail(ligandDetail)
-        }
+    if (atom === "") {
+      setAtomDetail([])
+      return;
+    }
+    axios.get(`https://neelpatel05.pythonanywhere.com/element/symbol?symbol=${atom?.name?.toUpperCase()}`)
+      .then(res => {
+        setAtomDetail(res.data)
       })
-  }, [ligand])
+  }, [atom])
 
-  useEffect(() => {
-    setTimeout(() => {
-      closeModal();
-    }, 3000);
-  }, [])
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     closeModal();
+  //   }, 3000);
+  // }, [])
 
   return (
     <>
@@ -89,58 +86,27 @@ export default function BottomHalfModal() {
         swipeDirection={['left', 'right']}
         style={styles.view}
       >
-        <View style={styles.content}>
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'center',
-            }}
-          >
-            <View
-              style={{
-                flexDirection: 'column',
-                // justifyContent: 'space-evenly',
-                justifyContent: 'center',
-                width: '45%',
-              }}
-            >
-              <AtomDetail
-                DataType={'Symbol'}
-                DataValue={ligandDetail.three_letter_code}
-                AddedStyle={{ marginBottom: 10 }}
-              />
-              <AtomDetail
-                DataType={'Formula'}
-                DataValue={ligandDetail.formula}
-              />
+        {atomDetail.length !== 0 &&
+          <SafeAreaView style={styles.DetailContainer}>
+            <View style={styles.atomContainer}>
+              <Text style={styles.atomLabel}>{atomDetail.symbol}</Text>
+              <Text style={{ fontSize: 10, }}>{atomDetail.name}</Text>
+              <Text style={{ fontSize: 10, }}>{atomDetail.standardState}</Text>
             </View>
-            <View
-              style={{
-                flexDirection: 'column',
-                // justifyContent: 'space-evenly',
-                justifyContent: 'center',
-                width: '45%',
-              }}
-            >
-              <AtomDetail
-                DataType={'Type'}
-                DataValue={ligandDetail.type}
-                AddedStyle={{ marginBottom: 10 }}
-              />
-              <AtomDetail
-                DataType={'Formula Weight'}
-                DataValue={parseFloat(ligandDetail.formula_weight).toFixed(2)}
-              />
+            <View style={styles.atomDetailContainer}>
+              <Text style={{ fontSize: 13 }}>Coordinates :</Text>
+              <View style={styles.coordinatesContainer}>
+                <Coordinate coordLabel="X" coord={atom.x} />
+                <Coordinate coordLabel="Y" coord={atom.y} />
+                <Coordinate coordLabel="Z" coord={atom.z} />
+              </View>
             </View>
-
-          </View>
-          <Button
-            title="See More Details"
-            onPress={() => {
-              Linking.openURL(`https://www.rcsb.org/ligand/${ligand}`);
-            }}
-          ></Button>
-        </View>
+            <View style={styles.proteinContainer}>
+              <AtomDetail DataType="Density :" DataValue={Number.parseFloat(atomDetail.density).toExponential()} />
+              <AtomDetail DataType="Atomic Number :" DataValue={atomDetail.atomicNumber} />
+            </View>
+          </SafeAreaView>
+        }
       </Modal>
     </>
   );
@@ -155,5 +121,75 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     backgroundColor: 'white',
     paddingVertical: 12,
-  }
+  },
+  DetailContainer: {
+    position: "absolute",
+    width: "100%",
+    height: 90,
+    backgroundColor: "#fff",
+    bottom: 0,
+    borderRadius: 18,
+    overflow: "hidden",
+    flexDirection: 'row',
+    zIndex: 2,
+  },
+  atomContainer: {
+    width: "20%",
+    height: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  atomLabel: {
+    fontSize: 30,
+    color: "#000",
+    fontWeight: "bold",
+  },
+  atomDetailContainer: {
+    flex: 1,
+    height: "100%",
+    paddingHorizontal: 10,
+    justifyContent: "space-between",
+    flexDirection: 'column',
+    paddingVertical: 15,
+  },
+  proteinContainer: {
+    width: "20%",
+    height: "100%",
+    justifyContent: "space-around",
+    fontWeight: "bold",
+    paddingVertical: 10,
+  },
+  proteinDetail: {
+    fontSize: 25,
+  },
+  atomNameLabel: {
+    fontSize: 10,
+    color: "#000",
+    fontWeight: "bold",
+  },
+  coordinatesContainer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+  },
+  coordinateContainer: {
+    backgroundColor: "#D8D8D8",
+    borderRadius: 10,
+    paddingVertical: 8,
+    paddingHorizontal: 10,
+    marginHorizontal: 5,
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  coordinateLabel: {
+    fontSize: 10,
+    color: "#fff",
+    fontWeight: "bold",
+  },
+  coordinate: {
+    fontSize: 9,
+    color: "#000",
+    fontWeight: "bold",
+    paddingLeft: 3,
+  },
 });
