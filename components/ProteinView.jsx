@@ -23,8 +23,6 @@ import ZoomButtons from "./HomeScreen/ZoomButtons";
 import BottomHalfModal from "./HomeScreen/modal";
 import ShareButtons from "./HomeScreen/ShareButtons";
 import { OrbitControls } from "../Helpers/controls/OrbitControls";
-import ProteinDetail from "./ProteinDetail";
-import Modal from 'react-native-modal';
 
 const raycaster = new THREE.Raycaster();
 
@@ -56,6 +54,16 @@ export default function Protein({ atoms, connects }) {
     renderRef.current = renderRef.current + 1;
     setLoading(false);
   }, [ligandmode, colorMode, orientation, selectedAtom]);
+
+  // ToDo: Add a loading screen
+  // this is khod3a but needs to be checked out
+
+  useEffect(() => {
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+    }, 80);
+  }, [scene, ligandmode, colorMode, orientation, selectedAtom]);
 
   const scene = new Scene();
   // Create scene
@@ -107,6 +115,11 @@ export default function Protein({ atoms, connects }) {
     camera.updateProjectionMatrix();
     // setCamera(camera);
   };
+
+  // useEffect(() => {
+  //   setLoading(true);
+  //   setLoading(false);
+  // }, [glViewRef]);
 
   return (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
@@ -195,7 +208,20 @@ export default function Protein({ atoms, connects }) {
               }}
             />
           ) : (
-            <ActivityIndicator />
+            <ActivityIndicator
+              size="large"
+              color="#fff"
+              animating={loading}
+              style={{
+                position: 'absolute',
+                backgroundColor: 'rgba(52, 52, 52, 0.8)',
+                width: '100%',
+                height: '100%',
+                justifyContent: 'center',
+                alignItems: 'center',
+                zIndex: 1,
+              }}
+            />
           )}
         </OrbitControlsView>
       </ViewShot>
@@ -231,8 +257,7 @@ export default function Protein({ atoms, connects }) {
       />
       <ZoomButtons ZoomIn={() => Zoom(true)} ZoomOut={() => Zoom(false)} />
       <ShareButtons renderRef={renderRef} viewShotRef={viewShotRef} />
-      {selectedAtom && <BottomHalfModal atom={selectedAtom} CoordX={selectedAtom.x} CoordY={selectedAtom.y} CoordZ={selectedAtom.z} />}
-      {/* <ProteinDetail atom={selectedAtom}/> */}
+      <BottomHalfModal atom={selectedAtom} CoordX={selectedAtom.x} CoordY={selectedAtom.y} CoordZ={selectedAtom.z} />
     </View>
   );
 }

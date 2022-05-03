@@ -75,15 +75,7 @@ export default function FlatListComponent({ navigation, DATA }) {
         size="large"
         color="#fff"
         animating={loading}
-        style={{
-          position: 'absolute',
-          backgroundColor: 'rgba(52, 52, 52, 0.8)',
-          width: '100%',
-          height: '100%',
-          justifyContent: 'center',
-          alignItems: 'center',
-          zIndex: 1,
-        }}
+        style={styles.indicatorStyle}
       />}
       <View style={styles.ligandsContainer} >
         <FlatList
@@ -101,6 +93,15 @@ export default function FlatListComponent({ navigation, DATA }) {
 }
 
 const styles = StyleSheet.create({
+  indicatorStyle: {
+    position: 'absolute',
+    backgroundColor: 'rgba(52, 52, 52, 0.8)',
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1,
+  },
   ligandsContainer: {
     display: 'flex',
     flex: 1,

@@ -13,7 +13,7 @@ const Coordinate = ({ coordLabel, coord }) => {
   )
 }
 
-const AtomDetail = ({ DataType, DataValue, AddedStyle }) => {
+const AtomDetail = ({ DataType, DataValue }) => {
   return (
     <View>
       <Text style={{ fontSize: 7, color: "#7F7F7F" }}>{DataType}</Text>
@@ -26,67 +26,47 @@ export default function BottomHalfModal({ atom }) {
   const [isModalVisible, setIsModalVisible] = useState(true);
   const closeModal = () => setIsModalVisible(false);
   const openModal = () => setIsModalVisible(true);
-  const [atomDetail, setAtomDetail] = useState([])
+  const [atomDetail, setAtomDetail] = useState([]);
+  const [disabled, setDisabled] = useState(true);
 
   useEffect(() => {
-    if (atom === "") {
+    if (atom?.name === "" || atom?.name === undefined) {
       setAtomDetail([])
+      setDisabled(true)
       return;
     }
     axios.get(`https://neelpatel05.pythonanywhere.com/element/symbol?symbol=${atom?.name?.toUpperCase()}`)
       .then(res => {
         setAtomDetail(res.data)
+        setDisabled(false)
       })
   }, [atom])
 
-  // useEffect(() => {
-  //   setTimeout(() => {
-  //     closeModal();
-  //   }, 3000);
-  // }, [])
-
   return (
     <>
-      <SafeAreaView style={{
-        position: "absolute",
-        bottom: 20,
-        left: 25,
-        zIndex: 2,
-      }}>
+      <SafeAreaView style={styles.buttonPosition}>
         <View
-          style={{
-            padding: 4,
-            backgroundColor: "white",
-            borderRadius: 10,
-          }}
+          style={styles.buttonContainer}
         >
-          <TouchableOpacity onPress={openModal}>
+          <TouchableOpacity onPress={openModal} disabled={disabled}>
             <View
-              style={{
-                backgroundColor: "#D8D8D8",
-                width: 40,
-                height: 40,
-                fontSize: 20,
-                borderRadius: 10,
-                justifyContent: "center",
-                alignItems: "center",
-              }}
+              style={styles.upButton}
             >
               <Ionicons name="chevron-up" size={20} color="black" />
             </View>
           </TouchableOpacity>
         </View>
       </SafeAreaView>
-      <Modal
-        testID={'modal'}
-        isVisible={isModalVisible}
-        onSwipeComplete={closeModal}
-        hasBackdrop={false}
-        coverScreen={false}
-        swipeDirection={['left', 'right']}
-        style={styles.view}
-      >
-        {atomDetail.length !== 0 &&
+      {atomDetail.length !== 0 &&
+        <Modal
+          testID={'modal'}
+          isVisible={isModalVisible}
+          onSwipeComplete={closeModal}
+          hasBackdrop={false}
+          coverScreen={false}
+          swipeDirection={['left', 'right']}
+          style={styles.view}
+        >
           <SafeAreaView style={styles.DetailContainer}>
             <View style={styles.atomContainer}>
               <Text style={styles.atomLabel}>{atomDetail.symbol}</Text>
@@ -106,8 +86,8 @@ export default function BottomHalfModal({ atom }) {
               <AtomDetail DataType="Atomic Number :" DataValue={atomDetail.atomicNumber} />
             </View>
           </SafeAreaView>
-        }
-      </Modal>
+        </Modal>
+      }
     </>
   );
 }
@@ -121,6 +101,26 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     backgroundColor: 'white',
     paddingVertical: 12,
+  },
+  buttonPosition: {
+    position: "absolute",
+    bottom: 20,
+    left: 25,
+    zIndex: 2,
+  },
+  buttonContainer: {
+    padding: 4,
+    backgroundColor: "white",
+    borderRadius: 10,
+  },
+  upButton: {
+    backgroundColor: "#D8D8D8",
+    width: 40,
+    height: 40,
+    fontSize: 20,
+    borderRadius: 10,
+    justifyContent: "center",
+    alignItems: "center",
   },
   DetailContainer: {
     position: "absolute",
