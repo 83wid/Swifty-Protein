@@ -13,7 +13,7 @@ export function AppWrapper({ children }) {
     x: 0,
     y: 0,
     z: 0,
-    name: "C",
+    name: "",
   });
   // const [scene, setscene] = useState(new THREE.Scene());
 
