@@ -1,4 +1,4 @@
-import { View, Text, TouchableWithoutFeedback, Animated, Easing } from "react-native";
+import { StyleSheet, View, Text, TouchableWithoutFeedback, Animated, Easing } from "react-native";
 import { useRef, useEffect, useState, useContext } from 'react';
 import { LigandContext } from "../../context/state";
 
@@ -20,15 +20,7 @@ export default function ColorSwitchButton({ addedStyle, items }) {
   }, [indicatorTransition]);
 
   return (
-    <View style={{
-      position: 'absolute',
-      backgroundColor: '#FFF',
-      flexDirection: 'row',
-      borderRadius: 12,
-      padding: 3,
-      alignItems: 'center',
-      ...addedStyle
-    }}
+    <View style={[styles.container, addedStyle]}
     >
       {items.map((item, index) => {
         return (
@@ -43,18 +35,10 @@ export default function ColorSwitchButton({ addedStyle, items }) {
             key={index}
           >
             <View
-              style={{
-                width: 65,
-                height: 35,
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
+              style={styles.textContainer}
             >
               <Text
-                style={{
-                  fontSize: 13,
-                  fontWeight: 'bold',
-                }}
+                style={styles.label}
               >{item.name}</Text>
             </View>
           </TouchableWithoutFeedback>
@@ -63,15 +47,39 @@ export default function ColorSwitchButton({ addedStyle, items }) {
       <Animated.View
         style={{
           width: buttonWidth,
-          height: 35,
-          position: 'absolute',
-          backgroundColor: "#D8D8D8",
-          borderRadius: 10,
           transform: [{ translateX: translation }],
-          zIndex: -1,
-          left: 3,
+          ...styles.indicator,
         }}
       ></Animated.View>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    position: 'absolute',
+    backgroundColor: '#FFF',
+    flexDirection: 'row',
+    borderRadius: 12,
+    padding: 3,
+    alignItems: 'center',
+  },
+  textContainer: {
+    width: 65,
+    height: 35,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  label: {
+    fontSize: 13,
+    fontWeight: 'bold'
+  },
+  indicator: {
+    height: 35,
+    position: 'absolute',
+    backgroundColor: "#D8D8D8",
+    borderRadius: 10,
+    zIndex: -1,
+    left: 3,
+  }
+})
