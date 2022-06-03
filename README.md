@@ -15,3 +15,11 @@ This project aims to make you familiar with :
 - SearchBar
 - Basic understanding of biochemy
 
+## Stack
+- Ract Native
+- Expo
+- Threejs
+
+## Availability
+- iOS
+- Android
