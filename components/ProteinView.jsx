@@ -26,10 +26,13 @@ import { OrbitControls } from "../Helpers/controls/OrbitControls";
 
 const raycaster = new THREE.Raycaster();
 
+
 export default function Protein({ atoms, connects }) {
   const [width, setWidth] = useState(Dimensions.get("screen").width);
   const [height, setHeight] = useState(Dimensions.get("screen").height);
   const [loading, setLoading] = useState(false);
+  const [selectedAtom, setSelectedAtom] = useState({x: 0, y: 0, z:0});
+  // const [scene, setScene] = useState(new Scene());
 
   const renderRef = React.useRef(null);
   const key = React.useRef(0);
@@ -37,8 +40,9 @@ export default function Protein({ atoms, connects }) {
   const ligandmode = value.state.ligandmode;
   const colorMode = value.state.colorMode;
   const orientation = value.state.orientation;
-  const selectedAtom = value.state.selectedAtom;
-  const setSelectedAtom = value.state.setSelectedAtom;
+  // const selectedAtom = useRef();
+  // const selectedAtom = value.state.selectedAtom;
+  // const setSelectedAtom = value.state.setSelectedAtom;
   const glViewRef = useRef(0);
 
   //Create Camera
@@ -50,20 +54,29 @@ export default function Protein({ atoms, connects }) {
   const group = new THREE.Group();
   useEffect(() => {
     setLoading(true);
+    scene.children.map((child, i) => {
+      // console.log(child);
+      if (child instanceof THREE.Mesh) {
+        child.material.dispose();
+        child.geometry.dispose();
+      }});
     glViewRef.current = glViewRef.current + 1;
     renderRef.current = renderRef.current + 1;
     setLoading(false);
-  }, [ligandmode, colorMode, orientation, selectedAtom]);
+  }, [ligandmode, colorMode, orientation]);
 
   // ToDo: Add a loading screen
   // this is khod3a but needs to be checked out
 
   useEffect(() => {
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-    }, 80);
-  }, [scene, ligandmode, colorMode, orientation, selectedAtom]);
+    scene.children.map((child, i) => {
+      // console.log(child);
+      if (child instanceof THREE.Mesh) {
+        child.material.dispose();
+        child.geometry.dispose();
+      }
+    });
+  }, [scene, ligandmode, colorMode, orientation]);
 
   const scene = new Scene();
   // Create scene
@@ -73,6 +86,7 @@ export default function Protein({ atoms, connects }) {
     camera.position.set(0, 0, -30);
     camera.lookAt(0, 0, 0);
     setCamera(camera);
+    console.log("started");
   }, []);
 
   // Show Atom info when Tap on Atom
@@ -83,29 +97,23 @@ export default function Protein({ atoms, connects }) {
     raycaster.setFromCamera(pointer, camera);
     // calculate objects intersecting the picking ray
     const intersects = raycaster.intersectObjects(scene.children);
-    console.log(intersects.length);
     if (intersects.length > 0) {
       let element = intersects[0].object;
       if (element.info != undefined) {
-        console.log("elemet", element.info);
+        console.log("click");
         setSelectedAtom(element.info);
-        // Alert.alert(
-        //   "Atom Details",
-        //   `Element : ${element.info["name"]}
-        //   x : ${parseFloat(element.info["x"].toFixed(2))}
-        //   y : ${parseFloat(element.info["y"].toFixed(2))}
-        //   z : ${parseFloat(element.info["z"].toFixed(2))}`,
-        //   [
-        //     { text: "OK", onPress: () => console.log("OK Pressed") },
-        //   ],
-        //   { cancelable: false }
-        // );
       }
     }
   };
-  const viewShotRef = React.useRef();
+  const viewShotRef = React.useRef({x : 0, y: 0, z: 0});
   // Zoom in and out on Touch
   const Zoom = (value) => {
+    scene.children.map((child, i) => {
+      if (child instanceof THREE.Mesh) {
+        child.material.dispose();
+        child.geometry.dispose();
+      }
+    });
     if (value) {
       if (camera.fov - 5 > 10) camera.fov -= 5;
     }
@@ -120,7 +128,9 @@ export default function Protein({ atoms, connects }) {
   //   setLoading(true);
   //   setLoading(false);
   // }, [glViewRef]);
-
+  const spotLight = new SpotLight(0xffffff, 0.5);
+  const ambientLight = new AmbientLight(0xffffff, 0.2);
+  const pointLight = new THREE.PointLight(0xffffff, 0.5);
   return (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
       <ViewShot ref={viewShotRef} options={{ format: "jpg", quality: 0.8 }}>
@@ -145,7 +155,7 @@ export default function Protein({ atoms, connects }) {
                 // Create lights
 
                 // spotlight
-                const spotLight = new SpotLight(0xffffff, 0.5);
+               
                 spotLight.position.set(
                   camera.position.x,
                   camera.position.y,
@@ -153,9 +163,10 @@ export default function Protein({ atoms, connects }) {
                 );
                 spotLight.lookAt(scene.position);
                 scene.add(spotLight);
+                // setScene(÷÷scene);
 
                 // ambient light
-                const ambientLight = new AmbientLight(0xffffff, 0.2);
+                
                 ambientLight.position.set(
                   camera.position.x,
                   camera.position.y,
@@ -164,7 +175,7 @@ export default function Protein({ atoms, connects }) {
                 scene.add(ambientLight);
 
                 // point light
-                const pointLight = new THREE.PointLight(0xffffff, 0.5);
+                
                 pointLight.position.set(
                   camera.position.x,
                   camera.position.y,
@@ -186,9 +197,7 @@ export default function Protein({ atoms, connects }) {
                   model: ligandmode,
                   rasmol: colorMode === 0 ? true : false,
                 });
-                scene.remove(scene.children);
                 scene.add(group);
-                // console.log("scene", scene.children);
                 // Create OrbitControls
                 const controls = new OrbitControls(camera, renderer.domElement);
 
@@ -202,6 +211,7 @@ export default function Protein({ atoms, connects }) {
                   controls.update();
                   requestAnimationFrame(render);
                   renderer.render(scene, camera);
+                  gl.flush();
                   gl.endFrameEXP();
                 };
                 render();
@@ -213,12 +223,12 @@ export default function Protein({ atoms, connects }) {
               color="#fff"
               animating={loading}
               style={{
-                position: 'absolute',
-                backgroundColor: 'rgba(52, 52, 52, 0.8)',
-                width: '100%',
-                height: '100%',
-                justifyContent: 'center',
-                alignItems: 'center',
+                position: "absolute",
+                backgroundColor: "rgba(52, 52, 52, 0.8)",
+                width: "100%",
+                height: "100%",
+                justifyContent: "center",
+                alignItems: "center",
                 zIndex: 1,
               }}
             />
@@ -226,6 +236,7 @@ export default function Protein({ atoms, connects }) {
         </OrbitControlsView>
       </ViewShot>
       <ModeSwitchButton
+        scene={scene}
         addedStyle={{ left: orientation === "portrait" ? 20 : 35, top: 20 }}
         items={[
           {
@@ -243,6 +254,7 @@ export default function Protein({ atoms, connects }) {
         ]}
       />
       <ColorSwitchButton
+        scene={scene}
         addedStyle={{ left: orientation === "portrait" ? 20 : 35, top: 70 }}
         items={[
           {
@@ -257,7 +269,12 @@ export default function Protein({ atoms, connects }) {
       />
       <ZoomButtons ZoomIn={() => Zoom(true)} ZoomOut={() => Zoom(false)} />
       <ShareButtons renderRef={renderRef} viewShotRef={viewShotRef} />
-      <BottomHalfModal atom={selectedAtom} CoordX={selectedAtom.x} CoordY={selectedAtom.y} CoordZ={selectedAtom.z} />
+      <BottomHalfModal
+        atom={selectedAtom}
+        CoordX={selectedAtom?.x}
+        CoordY={selectedAtom?.y}
+        CoordZ={selectedAtom?.z}
+      />
     </View>
   );
 }
