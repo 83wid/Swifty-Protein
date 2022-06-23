@@ -23,6 +23,7 @@ const AtomDetail = ({ DataType, DataValue }) => {
 }
 
 export default function BottomHalfModal({ atom }) {
+  console.log(atom);
   const [isModalVisible, setIsModalVisible] = useState(true);
   const closeModal = () => setIsModalVisible(false);
   const openModal = () => setIsModalVisible(true);
